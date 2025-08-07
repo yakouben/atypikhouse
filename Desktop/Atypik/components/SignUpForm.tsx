@@ -61,9 +61,7 @@ export default function SignUpForm() {
 
     try {
       console.log('Starting signup process...');
-      const result = await signUp({
-        email: userData.email,
-        password: userData.password,
+      const result = await signUp(userData.email, userData.password, {
         full_name: userData.full_name,
         user_type: userData.user_type
       });

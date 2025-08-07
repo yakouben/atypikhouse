@@ -40,13 +40,10 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      const result = await signIn({
-        email: loginData.email,
-        password: loginData.password
-      });
+      const result = await signIn(loginData.email, loginData.password);
 
       if (result.error) {
-        setError(result.error);
+        setError(result.error.message || result.error);
       } else {
         // Success - user will be redirected to their dashboard
         console.log('Login successful');
@@ -158,7 +155,7 @@ export default function LoginForm() {
               <p className="text-gray-600">
                 Vous n'avez pas de compte ?{' '}
                 <button
-                  onClick={() => router.push('/auth/signup')}
+                  onClick={() => router.push('/auth/register')}
                   className="text-[#4A7C59] hover:text-[#2C3E37] font-medium transition-colors"
                 >
                   Créer un compte
