@@ -149,7 +149,7 @@ export default function PropertyDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f5f5dc] flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#2d5016]"></div>
       </div>
     );
@@ -157,7 +157,7 @@ export default function PropertyDetailPage() {
 
   if (!property) {
     return (
-      <div className="min-h-screen bg-[#f5f5dc] flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-[#333333] mb-4">Property not found</h1>
           <Button onClick={() => router.back()} className="bg-[#2d5016] hover:bg-[#1a3a0f] text-white">
@@ -189,7 +189,7 @@ export default function PropertyDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f5dc]">
+    <div className="min-h-screen bg-white">
       {/* Header - Clean, minimal top bar */}
       <div className="bg-white shadow-sm border-b border-[#696969]/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
