@@ -393,16 +393,6 @@ export default function Home() {
       </section>
       
       {/* Reservation Modal */}
-      {showReservationModal && (
-        <div className="fixed inset-0 bg-red-500 z-[9999] flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg">
-            <h2>Test Modal - {selectedPropertyName}</h2>
-            <p>Property ID: {selectedPropertyId}</p>
-            <button onClick={handleCloseReservationModal}>Close</button>
-          </div>
-        </div>
-      )}
-      
       <ReservationModal
         isOpen={showReservationModal}
         onClose={handleCloseReservationModal}
