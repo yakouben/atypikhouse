@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useAuthContext } from '@/components/AuthProvider';
 
 interface Property {
   id: string;
@@ -41,6 +42,7 @@ interface Property {
 export default function PropertyDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { userProfile } = useAuthContext();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('description');
@@ -189,20 +191,19 @@ export default function PropertyDetailPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
+          <div className="flex items-center justify-between h-16">
             <button
               onClick={() => router.back()}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
-              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">Back</span>
+              <X className="w-5 h-5" />
             </button>
-            <div className="flex items-center space-x-2 sm:space-x-4">
+            <div className="flex items-center space-x-4">
               <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                <Share2 className="w-5 h-5 text-gray-600" />
               </button>
               <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                <Share2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                <Heart className="w-5 h-5 text-gray-600" />
               </button>
             </div>
           </div>
@@ -210,11 +211,22 @@ export default function PropertyDetailPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        {/* Property Title and Address */}
+        {/* Property Title and Rating */}
         <div className="mb-4 sm:mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             {property.name}
           </h1>
+          <div className="flex items-center space-x-4 mb-2">
+            <div className="flex items-center space-x-1">
+              <Star className="w-4 h-4 text-yellow-400 fill-current" />
+              <span className="font-medium text-gray-900">4.92</span>
+              <span className="text-gray-600">(116 reviews)</span>
+            </div>
+            <span className="text-gray-600">•</span>
+            <span className="text-gray-600">Entire home</span>
+            <span className="text-gray-600">•</span>
+            <span className="text-gray-600">Hosted by {userProfile?.full_name?.split(' ')[0] || 'Host'}</span>
+          </div>
           <div className="flex items-center text-gray-600">
             <MapPin className="w-4 h-4 mr-2" />
             <span className="text-sm sm:text-base">{property.location}</span>
@@ -347,7 +359,7 @@ export default function PropertyDetailPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
           <div className="flex items-center space-x-2 p-2 sm:p-3 bg-gray-50 rounded-lg">
             <Wifi className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-            <span className="text-xs sm:text-sm font-medium">Wifi</span>
+            <span className="text-xs sm:text-sm font-medium">Wi-Fi</span>
           </div>
           <div className="flex items-center space-x-2 p-2 sm:p-3 bg-gray-50 rounded-lg">
             <Bed className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
