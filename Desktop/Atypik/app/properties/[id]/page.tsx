@@ -149,18 +149,20 @@ export default function PropertyDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+      <div className="min-h-screen bg-[#f5f5dc] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#2d5016]"></div>
       </div>
     );
   }
 
   if (!property) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#f5f5dc] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Property not found</h1>
-          <Button onClick={() => router.back()}>Go Back</Button>
+          <h1 className="text-2xl font-bold text-[#333333] mb-4">Property not found</h1>
+          <Button onClick={() => router.back()} className="bg-[#2d5016] hover:bg-[#1a3a0f] text-white">
+            Go Back
+          </Button>
         </div>
       </div>
     );
@@ -178,32 +180,35 @@ export default function PropertyDetailPage() {
 
   const getCategoryTags = (category: string) => {
     const tags = {
-      'cabane_arbre': ['Minimalist', 'Beach House', 'Tropic', 'Private Pool'],
+      'cabane_arbre': ['Authentic', 'Nature', 'Comfort', 'Unique'],
       'yourte': ['Authentic', 'Nature', 'Comfort', 'Unique'],
-      'cabane_flottante': ['Waterfront', 'Peaceful', 'Floating', 'Scenic'],
-      'autre': ['Unique', 'Comfortable', 'Modern', 'Cozy']
+      'cabane_flottante': ['Authentic', 'Nature', 'Comfort', 'Unique'],
+      'autre': ['Authentic', 'Nature', 'Comfort', 'Unique']
     };
-    return tags[category as keyof typeof tags] || ['Comfortable', 'Unique', 'Modern'];
+    return tags[category as keyof typeof tags] || ['Authentic', 'Nature', 'Comfort', 'Unique'];
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div className="min-h-screen bg-[#f5f5dc]">
+      {/* Header - Clean, minimal top bar */}
+      <div className="bg-white shadow-sm border-b border-[#696969]/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+            {/* Close button on top left */}
             <button
               onClick={() => router.back()}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 text-[#333333]" />
             </button>
-            <div className="flex items-center space-x-4">
-              <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                <Share2 className="w-5 h-5 text-gray-600" />
+            
+            {/* Floating action buttons on top right */}
+            <div className="flex items-center space-x-2">
+              <button className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
+                <Share2 className="w-5 h-5 text-[#333333]" />
               </button>
-              <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                <Heart className="w-5 h-5 text-gray-600" />
+              <button className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
+                <Heart className="w-5 h-5 text-[#333333]" />
               </button>
             </div>
           </div>
@@ -211,181 +216,144 @@ export default function PropertyDetailPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        {/* Property Title and Rating */}
-        <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+        {/* Property Title & Rating Section - Enhanced typography */}
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#333333] mb-3">
             {property.name}
           </h1>
-          <div className="flex items-center space-x-4 mb-2">
-            <div className="flex items-center space-x-1">
-              <Star className="w-4 h-4 text-yellow-400 fill-current" />
-              <span className="font-medium text-gray-900">4.92</span>
-              <span className="text-gray-600">(116 reviews)</span>
-            </div>
-            <span className="text-gray-600">•</span>
-            <span className="text-gray-600">Entire home</span>
-            <span className="text-gray-600">•</span>
-            <span className="text-gray-600">Hosted by {userProfile?.full_name?.split(' ')[0] || 'Host'}</span>
+          
+          {/* Star rating system */}
+          <div className="flex items-center space-x-2 mb-2">
+            <Star className="w-5 h-5 text-[#daa520] fill-current" />
+            <span className="font-bold text-[#333333] text-lg">4.92</span>
+            <span className="text-[#696969] text-sm">(116 reviews)</span>
           </div>
-          <div className="flex items-center text-gray-600">
-            <MapPin className="w-4 h-4 mr-2" />
-            <span className="text-sm sm:text-base">{property.location}</span>
+          
+          {/* Property type and host information */}
+          <div className="flex items-center space-x-2 mb-3">
+            <span className="text-[#333333] font-medium">Entire home</span>
+            <span className="text-[#696969]">•</span>
+            <span className="text-[#333333]">Hosted by {userProfile?.full_name?.split(' ')[0] || 'Host'}</span>
+          </div>
+          
+          {/* Location with pin icon */}
+          <div className="flex items-center text-[#333333]">
+            <MapPin className="w-4 h-4 mr-2 text-[#2d5016]" />
+            <span className="text-sm sm:text-base font-medium">{property.location}</span>
           </div>
         </div>
 
-        {/* Enhanced Property Images - Mobile Horizontal Scroll */}
+        {/* Image Gallery - Full-width carousel slider */}
         <div className="mb-6 sm:mb-8">
           {property.images && property.images.length > 0 ? (
             <div className="relative">
-              {/* Desktop Grid Layout */}
-              <div className="hidden sm:grid sm:grid-cols-4 gap-2 sm:gap-4">
-                {/* Main large image */}
-                <div className="col-span-2 row-span-2 relative group">
-                  <img
-                    src={property.images[selectedImage] || property.images[0]}
-                    alt={property.name}
-                    className="w-full h-48 sm:h-96 object-cover rounded-xl sm:rounded-2xl cursor-pointer hover:opacity-90 transition-all duration-300 group-hover:scale-105"
-                    onClick={() => setShowFullImage(true)}
-                  />
-                  {/* Overlay on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  
-                  {/* View fullscreen indicator */}
-                  <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm text-gray-900 px-3 py-2 rounded-full text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                    View fullscreen
-                  </div>
-                </div>
-                {/* Smaller images */}
-                {property.images.slice(0, 3).map((image, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={image}
-                      alt={`${property.name} - Image ${index + 1}`}
-                      className="w-full h-24 sm:h-48 object-cover rounded-xl sm:rounded-2xl cursor-pointer hover:opacity-80 transition-all duration-300 group-hover:scale-105"
-                      onClick={() => setSelectedImage(index)}
-                    />
-                    {/* Overlay on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    
-                    {/* Image number indicator */}
-                    <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
-                      {index + 2}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Mobile Horizontal Scroll Layout */}
-              <div className="sm:hidden relative">
-                <div className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-3 pb-4 -mx-4 px-4">
-                  {property.images.map((image, index) => (
-                    <div 
-                      key={index} 
-                      className="flex-shrink-0 w-80 h-64 snap-center relative group"
-                    >
-                      <img
-                        src={image}
-                        alt={`${property.name} - Image ${index + 1}`}
-                        className="w-full h-full object-cover rounded-2xl shadow-lg transition-transform duration-300 group-hover:scale-105"
-                        onClick={() => {
-                          setSelectedImage(index);
-                          setShowFullImage(true);
-                        }}
-                      />
-                      {/* Image overlay with gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      
-                      {/* Image counter */}
-                      <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
-                        {index + 1} / {property.images.length}
-                      </div>
-                      
-                      {/* Tap to view indicator */}
-                      <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm text-gray-900 px-2 py-1 rounded-full text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                        Tap to view
-                      </div>
-                    </div>
-                  ))}
+              {/* Full-width carousel */}
+              <div className="relative h-64 sm:h-80 bg-gray-200 rounded-2xl overflow-hidden shadow-lg">
+                <img
+                  src={property.images[selectedImage]}
+                  alt={property.name}
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Image counter overlay */}
+                <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                  {selectedImage + 1} / {property.images.length}
                 </div>
                 
-                {/* Scroll indicators */}
+                {/* Navigation arrows */}
+                {property.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5 text-[#333333]" />
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+                    >
+                      <ChevronRight className="w-5 h-5 text-[#333333]" />
+                    </button>
+                  </>
+                )}
+              </div>
+              
+              {/* Carousel indicators */}
+              {property.images.length > 1 && (
                 <div className="flex justify-center mt-4 space-x-2">
                   {property.images.map((_, index) => (
                     <div
                       key={index}
                       className={`w-2 h-2 rounded-full transition-colors ${
-                        index === selectedImage ? 'bg-green-600' : 'bg-gray-300'
+                        index === selectedImage ? 'bg-[#2d5016]' : 'bg-[#696969]/30'
                       }`}
                     />
                   ))}
                 </div>
-              </div>
-
-              {/* Navigation arrows for mobile */}
-              <div className="sm:hidden absolute top-1/2 left-4 transform -translate-y-1/2">
-                <button
-                  onClick={prevImage}
-                  className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg hover:bg-white transition-colors"
-                >
-                  <ChevronLeft className="w-5 h-5 text-gray-700" />
-                </button>
-              </div>
-              <div className="sm:hidden absolute top-1/2 right-4 transform -translate-y-1/2">
-                <button
-                  onClick={nextImage}
-                  className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg hover:bg-white transition-colors"
-                >
-                  <ChevronRight className="w-5 h-5 text-gray-700" />
-                </button>
-              </div>
+              )}
             </div>
           ) : (
-            <div className="col-span-4 h-48 sm:h-96 bg-gray-200 rounded-xl sm:rounded-2xl flex items-center justify-center">
-              <span className="text-gray-500 text-sm sm:text-base">No images available</span>
+            <div className="h-64 sm:h-80 bg-gray-200 rounded-2xl flex items-center justify-center">
+              <span className="text-[#696969] text-sm sm:text-base">No images available</span>
             </div>
           )}
         </div>
 
-        {/* Property Tags */}
+        {/* Property Tags - Rounded pill buttons */}
         <div className="flex flex-wrap gap-2 mb-6 sm:mb-8">
           {getCategoryTags(property.category).map((tag, index) => (
-            <Badge key={index} variant="secondary" className="px-2 py-1 sm:px-3 text-xs sm:text-sm">
+            <Badge 
+              key={index} 
+              className="px-4 py-2 bg-[#87a96b]/20 text-[#333333] border border-[#87a96b]/30 rounded-full font-medium hover:bg-[#87a96b]/30 transition-colors"
+            >
               {tag}
             </Badge>
           ))}
         </div>
 
-        {/* Hotel Features */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
-          <div className="flex items-center space-x-2 p-2 sm:p-3 bg-gray-50 rounded-lg">
-            <Wifi className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-            <span className="text-xs sm:text-sm font-medium">Wi-Fi</span>
-          </div>
-          <div className="flex items-center space-x-2 p-2 sm:p-3 bg-gray-50 rounded-lg">
-            <Bed className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-            <span className="text-xs sm:text-sm font-medium">King Bed</span>
-          </div>
-          <div className="flex items-center space-x-2 p-2 sm:p-3 bg-gray-50 rounded-lg">
-            <Bath className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-            <span className="text-xs sm:text-sm font-medium">Bathup</span>
-          </div>
-          <div className="flex items-center space-x-2 p-2 sm:p-3 bg-gray-50 rounded-lg">
-            <Coffee className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-            <span className="text-xs sm:text-sm font-medium">Breakfast</span>
+        {/* Amenities Section - 2x2 grid layout */}
+        <div className="mb-6 sm:mb-8">
+          <h3 className="text-lg sm:text-xl font-bold text-[#333333] mb-4">Amenities</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
+              <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
+                <Wifi className="w-5 h-5 text-[#2d5016]" />
+              </div>
+              <span className="font-medium text-[#333333]">Wi-Fi</span>
+            </div>
+            <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
+              <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
+                <Bed className="w-5 h-5 text-[#2d5016]" />
+              </div>
+              <span className="font-medium text-[#333333]">King Bed</span>
+            </div>
+            <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
+              <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
+                <Bath className="w-5 h-5 text-[#2d5016]" />
+              </div>
+              <span className="font-medium text-[#333333]">Bathup</span>
+            </div>
+            <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
+              <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
+                <Coffee className="w-5 h-5 text-[#2d5016]" />
+              </div>
+              <span className="font-medium text-[#333333]">Breakfast</span>
+            </div>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="border-b border-gray-200 mb-6 sm:mb-8">
-          <nav className="flex space-x-4 sm:space-x-8 overflow-x-auto">
+        {/* Tab Navigation - Enhanced with underline indicator */}
+        <div className="border-b border-[#696969]/20 mb-6 sm:mb-8">
+          <nav className="flex space-x-6 sm:space-x-8 overflow-x-auto">
             {['description', 'feature', 'virtual', 'reviews'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`py-2 px-1 border-b-2 font-medium text-xs sm:text-sm capitalize whitespace-nowrap ${
+                className={`py-3 px-1 border-b-2 font-medium text-sm sm:text-base capitalize whitespace-nowrap transition-colors ${
                   activeTab === tab
-                    ? 'border-green-600 text-green-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-[#2d5016] text-[#2d5016]'
+                    : 'border-transparent text-[#696969] hover:text-[#333333] hover:border-[#696969]/30'
                 }`}
               >
                 {tab}
@@ -394,20 +362,20 @@ export default function PropertyDetailPage() {
           </nav>
         </div>
 
-        {/* Tab Content */}
+        {/* Tab Content - Enhanced styling */}
         <div className="mb-6 sm:mb-8">
           {activeTab === 'description' && (
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Our House</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Our House</h3>
               <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+                <p className="text-[#333333] leading-relaxed text-sm sm:text-base">
                   {property.description || `Experience the ultimate comfort and luxury in our ${getCategoryLabel(property.category)}. 
                   This deluxe accommodation offers a perfect blend of modern amenities and natural beauty, 
                   making it ideal for couples, families, or solo travelers seeking a unique and memorable stay. 
                   With ${property.max_guests} guests capacity and stunning views, this property provides everything 
                   you need for a relaxing and enjoyable vacation.`}
                 </p>
-                <p className="text-gray-700 leading-relaxed mt-4 text-sm sm:text-base">
+                <p className="text-[#333333] leading-relaxed mt-4 text-sm sm:text-base">
                   The property features comfortable sleeping arrangements, modern bathroom facilities, 
                   and a cozy living space designed for your comfort. Whether you're looking for a romantic getaway, 
                   a family vacation, or a peaceful retreat, this accommodation offers the perfect setting 
@@ -419,31 +387,31 @@ export default function PropertyDetailPage() {
 
           {activeTab === 'feature' && (
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Features & Amenities</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Features & Amenities</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="flex items-center space-x-2">
-                  <Wifi className="w-4 h-4 text-green-600" />
-                  <span className="text-sm sm:text-base">Free WiFi</span>
+                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                  <Wifi className="w-5 h-5 text-[#2d5016]" />
+                  <span className="text-[#333333] font-medium">Free WiFi</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Bed className="w-4 h-4 text-green-600" />
-                  <span className="text-sm sm:text-base">Comfortable Bedding</span>
+                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                  <Bed className="w-5 h-5 text-[#2d5016]" />
+                  <span className="text-[#333333] font-medium">Comfortable Bedding</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Bath className="w-4 h-4 text-green-600" />
-                  <span className="text-sm sm:text-base">Private Bathroom</span>
+                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                  <Bath className="w-5 h-5 text-[#2d5016]" />
+                  <span className="text-[#333333] font-medium">Private Bathroom</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Coffee className="w-4 h-4 text-green-600" />
-                  <span className="text-sm sm:text-base">Breakfast Included</span>
+                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                  <Coffee className="w-5 h-5 text-[#2d5016]" />
+                  <span className="text-[#333333] font-medium">Breakfast Included</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Users className="w-4 h-4 text-green-600" />
-                  <span className="text-sm sm:text-base">Max {property.max_guests} Guests</span>
+                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                  <Users className="w-5 h-5 text-[#2d5016]" />
+                  <span className="text-[#333333] font-medium">Max {property.max_guests} Guests</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Euro className="w-4 h-4 text-green-600" />
-                  <span className="text-sm sm:text-base">€{property.price_per_night}/night</span>
+                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                  <Euro className="w-5 h-5 text-[#2d5016]" />
+                  <span className="text-[#333333] font-medium">€{property.price_per_night}/night</span>
                 </div>
               </div>
             </div>
@@ -451,18 +419,18 @@ export default function PropertyDetailPage() {
 
           {activeTab === 'virtual' && (
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Virtual Tour</h3>
-              <div className="bg-gray-200 rounded-xl sm:rounded-2xl h-48 sm:h-64 flex items-center justify-center">
-                <span className="text-gray-500 text-sm sm:text-base">Virtual tour coming soon</span>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Virtual Tour</h3>
+              <div className="bg-white rounded-2xl h-48 sm:h-64 flex items-center justify-center shadow-sm border border-[#696969]/20">
+                <span className="text-[#696969] text-sm sm:text-base">Virtual tour coming soon</span>
               </div>
             </div>
           )}
 
           {activeTab === 'reviews' && (
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Reviews</h3>
-              <div className="bg-gray-200 rounded-xl sm:rounded-2xl h-48 sm:h-64 flex items-center justify-center">
-                <span className="text-gray-500 text-sm sm:text-base">Reviews coming soon</span>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Reviews</h3>
+              <div className="bg-white rounded-2xl h-48 sm:h-64 flex items-center justify-center shadow-sm border border-[#696969]/20">
+                <span className="text-[#696969] text-sm sm:text-base">Reviews coming soon</span>
               </div>
             </div>
           )}
@@ -470,132 +438,59 @@ export default function PropertyDetailPage() {
 
         {/* Enhanced Map Section */}
         <div className="mb-6 sm:mb-8">
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Location</h3>
+          <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Location</h3>
           <div className="relative">
-            {property.maps_link ? (
-              <div className="relative">
-                {/* Map Preview */}
-                <div className="relative h-64 sm:h-80 bg-gray-200 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
-                  {/* Google Maps Embed - Using the owner's provided maps_link */}
-                  <iframe
-                    src={property.maps_link.includes('embed') ? property.maps_link : `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(property.location)}`}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="rounded-xl sm:rounded-2xl"
-                  />
-                  
-                  {/* Map Overlay with Info */}
-                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-gray-100">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <MapPin className="w-5 h-5 text-green-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 text-sm sm:text-base">Property Location</h4>
-                        <p className="text-gray-600 text-xs sm:text-sm">{property.location}</p>
-                      </div>
-                    </div>
+            <div className="relative h-64 sm:h-80 bg-gray-200 rounded-2xl overflow-hidden shadow-lg">
+              <iframe
+                src={property.maps_link?.includes('embed') ? property.maps_link : `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(property.location)}`}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="rounded-2xl"
+              />
+              
+              {/* Map Overlay with Info */}
+              <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-[#696969]/20">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-[#2d5016]/10 rounded-full flex items-center justify-center">
+                    <MapPin className="w-5 h-5 text-[#2d5016]" />
                   </div>
-                  
-                  {/* Open in Maps Button */}
-                  <div className="absolute bottom-4 right-4">
-                    <Button
-                      onClick={() => window.open(property.maps_link, '_blank')}
-                      className="bg-white/95 backdrop-blur-sm text-gray-900 hover:bg-white shadow-xl border border-gray-100 flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      <span className="text-sm font-medium">Open in Maps</span>
-                    </Button>
-                  </div>
-                  
-                  {/* Map Controls Overlay */}
-                  <div className="absolute top-4 right-4 flex flex-col space-y-2">
-                    <button className="bg-white/95 backdrop-blur-sm rounded-lg p-2 shadow-xl border border-gray-100 hover:bg-white transition-all duration-300 hover:scale-105">
-                      <MapPin className="w-4 h-4 text-gray-700" />
-                    </button>
-                    <button className="bg-white/95 backdrop-blur-sm rounded-lg p-2 shadow-xl border border-gray-100 hover:bg-white transition-all duration-300 hover:scale-105">
-                      <Star className="w-4 h-4 text-gray-700" />
-                    </button>
+                  <div>
+                    <h4 className="font-semibold text-[#333333] text-sm sm:text-base">Property Location</h4>
+                    <p className="text-[#696969] text-xs sm:text-sm">{property.location}</p>
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="relative h-64 sm:h-80 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
-                {/* Fallback map using Google Maps embed with location */}
-                <iframe
-                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(property.location)}`}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="rounded-xl sm:rounded-2xl"
-                />
-                
-                {/* Map Overlay with Info */}
-                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-gray-100">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 text-sm sm:text-base">Property Location</h4>
-                      <p className="text-gray-600 text-xs sm:text-sm">{property.location}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Open in Maps Button */}
-                <div className="absolute bottom-4 right-4">
-                  <Button
-                    onClick={() => window.open(`https://www.google.com/maps/search/${encodeURIComponent(property.location)}`, '_blank')}
-                    className="bg-white/95 backdrop-blur-sm text-gray-900 hover:bg-white shadow-xl border border-gray-100 flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span className="text-sm font-medium">Open in Maps</span>
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Luxury Booking Section */}
-        <div className="mb-6 sm:mb-8">
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 sm:p-8 border border-green-100 shadow-lg">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-              <div className="mb-4 sm:mb-0">
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Ready to Book?</h3>
-                <p className="text-gray-600 text-sm sm:text-base">
-                  Experience luxury and comfort in this amazing {getCategoryLabel(property.category).toLowerCase()}
-                </p>
-                <div className="flex items-center space-x-4 mt-3">
-                  <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span className="text-sm font-medium text-gray-900">4.9</span>
-                    <span className="text-sm text-gray-600">(127 reviews)</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Users className="w-4 h-4 text-gray-600" />
-                    <span className="text-sm text-gray-600">Max {property.max_guests} guests</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col space-y-3">
-                <div className="text-right">
-                  <div className="text-3xl sm:text-4xl font-bold text-gray-900">€{property.price_per_night}</div>
-                  <div className="text-sm text-gray-600">per night</div>
-                </div>
-                <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  Book Now
+              
+              {/* Open in Maps Button */}
+              <div className="absolute bottom-4 right-4">
+                <Button
+                  onClick={() => window.open(property.maps_link || `https://www.google.com/maps/search/${encodeURIComponent(property.location)}`, '_blank')}
+                  className="bg-white/95 backdrop-blur-sm text-[#333333] hover:bg-white shadow-xl border border-[#696969]/20 flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="text-sm font-medium">Open in Maps</span>
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Booking Card */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#696969]/20 shadow-2xl z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <span className="text-[#696969] text-sm">18 - 21 Oct • 3 nights</span>
+              <span className="text-2xl sm:text-3xl font-bold text-[#333333]">€{property.price_per_night}</span>
+            </div>
+            <Button className="bg-[#2d5016] hover:bg-[#1a3a0f] text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+              Book now
+            </Button>
           </div>
         </div>
       </div>
