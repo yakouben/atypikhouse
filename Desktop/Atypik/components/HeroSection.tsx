@@ -114,13 +114,6 @@ export default function HeroSection({ onReserverClick, onAddPropertyClick, onCon
                 
                 {/* Right Side - Search and Actions */}
                 <div className="flex items-center space-x-4 lg:space-x-6">
-                  {/* Search Icon */}
-                  <button className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </button>
-                  
                   {/* Navigation Links */}
                   <nav className="hidden lg:flex items-center space-x-4">
                     <button 

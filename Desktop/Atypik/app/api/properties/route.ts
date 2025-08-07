@@ -144,6 +144,7 @@ export async function GET(request: NextRequest) {
     const ownerId = searchParams.get('ownerId');
     const published = searchParams.get('published');
     const available = searchParams.get('available');
+    const category = searchParams.get('category');
 
     let query = supabase
       .from('properties')
@@ -166,6 +167,11 @@ export async function GET(request: NextRequest) {
     // Filter by availability
     if (available === 'true') {
       query = query.eq('is_available', true);
+    }
+
+    // Filter by category if specified
+    if (category && category !== 'all') {
+      query = query.eq('category', category);
     }
 
     const { data, error } = await query;

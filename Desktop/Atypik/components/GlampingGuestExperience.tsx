@@ -2,12 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { 
-  Search,
   MapPin,
   Calendar,
   Users,
-  Filter,
-  Heart,
   Star,
   Bed,
   Bath,
@@ -15,17 +12,12 @@ import {
   Coffee,
   Car,
   Mountain,
-  Tent,
   Home,
   Castle,
   Caravan,
   ArrowRight,
-  SlidersHorizontal,
   Grid3X3,
   List,
-  Map,
-  Share2,
-  MoreVertical,
   TreePine,
   User,
   LogOut
@@ -48,14 +40,13 @@ interface Property {
   category: string; // Added category field
 }
 
-const propertyTypes = [
-  { name: 'Tous', icon: TreePine, color: '#4A7C59' },
-  { name: 'Cabanes', icon: Home, color: '#4A7C59' },
-  { name: 'Tipis', icon: Tent, color: '#8B4513' },
-  { name: 'Yourtes', icon: Castle, color: '#DAA520' },
-  { name: 'Tiny Houses', icon: Home, color: '#2C3E37' },
-  { name: 'Pods', icon: Caravan, color: '#6B8E23' },
-  { name: 'Tentes Safari', icon: Tent, color: '#CD853F' }
+// Only the 4 database categories
+const accommodationCategories = [
+  { name: 'Tous', icon: TreePine, category: 'all' },
+  { name: 'Cabanes dans les arbres', icon: TreePine, category: 'cabane_arbre' },
+  { name: 'Yourtes', icon: Castle, category: 'yourte' },
+  { name: 'Cabanes flottantes', icon: Caravan, category: 'cabane_flottante' },
+  { name: 'Autres hébergements', icon: Home, category: 'autre' }
 ];
 
 const amenities = [
@@ -71,20 +62,22 @@ export default function GlampingGuestExperience() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('discover');
-  const [selectedFilter, setSelectedFilter] = useState('Tous');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     loadProperties();
-  }, []);
+  }, [selectedCategory]);
 
   const loadProperties = async () => {
     setLoading(true);
     try {
-      // Use the new API route to get all published properties
-      const response = await fetch('/api/properties?published=true&available=true');
+      const url = selectedCategory === 'all' 
+        ? '/api/properties?published=true&available=true' 
+        : `/api/properties?category=${selectedCategory}&published=true&available=true`;
+      
+      const response = await fetch(url);
       const result = await response.json();
       
       if (response.ok && result.data) {
@@ -111,8 +104,9 @@ export default function GlampingGuestExperience() {
         console.error('Sign out error:', result.error);
         // You could show an error message to the user here
       } else {
-        console.log('Sign out successful, redirecting to home...');
-        // The AuthProvider will handle the redirect automatically
+        console.log('Sign out successful, redirecting to old hero section...');
+        // Redirect to the old hero section
+        router.push('/hero');
       }
     } catch (error) {
       console.error('Sign out exception:', error);
@@ -124,7 +118,7 @@ export default function GlampingGuestExperience() {
       'cabane_arbre': 'Cabanes dans les arbres',
       'yourte': 'Yourtes',
       'cabane_flottante': 'Cabanes flottantes',
-      'autre': 'Autre hébergement'
+      'autre': 'Autres hébergements'
     };
     return categories[category as keyof typeof categories] || category;
   };
@@ -141,8 +135,7 @@ export default function GlampingGuestExperience() {
   const filteredProperties = properties.filter(property => {
     const matchesSearch = property.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          property.location.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = selectedFilter === 'Tous' || getCategoryLabel(property.category).includes(selectedFilter);
-    return matchesSearch && matchesFilter;
+    return matchesSearch;
   });
 
   if (loading) {
@@ -162,33 +155,34 @@ export default function GlampingGuestExperience() {
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
-          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4">
               <h1 className="text-lg sm:text-xl font-bold text-gray-900">Découvrir</h1>
+              <button 
+                onClick={handleSignOut}
+                className="flex items-center space-x-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-3 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-sm border border-red-200 text-sm"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Déconnexion</span>
+              </button>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                <Search className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-            </button>
-              <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                <Filter className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-            </button>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-lg transition-colors ${
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 rounded-lg transition-colors ${
                     viewMode === 'grid' ? 'bg-gray-200' : 'hover:bg-gray-100'
-              }`}
-            >
+                  }`}
+                >
                   <Grid3X3 className="w-4 h-4 text-gray-600" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg transition-colors ${
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded-lg transition-colors ${
                     viewMode === 'list' ? 'bg-gray-200' : 'hover:bg-gray-100'
-              }`}
-            >
+                  }`}
+                >
                   <List className="w-4 h-4 text-gray-600" />
-            </button>
+                </button>
               </div>
             </div>
           </div>
@@ -202,38 +196,40 @@ export default function GlampingGuestExperience() {
             {/* Search Bar */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
                 <input
                   type="text"
                   placeholder="Rechercher un hébergement..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base"
+                  className="w-full pl-4 pr-4 py-2 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base"
                 />
               </div>
             </div>
 
-            {/* Property Type Filters */}
+            {/* Category Filters - Only the 4 database categories */}
             <div className="flex flex-wrap gap-2">
-              {propertyTypes.map((type) => (
-                    <button
-                      key={type.name}
-                      onClick={() => setSelectedFilter(type.name)}
-                  className={`px-3 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors ${
-                        selectedFilter === type.name
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                  <type.icon className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
-                  {type.name}
-                    </button>
-              ))}
+              {accommodationCategories.map((category) => {
+                const IconComponent = category.icon;
+                return (
+                  <button
+                    key={category.name}
+                    onClick={() => setSelectedCategory(category.category)}
+                    className={`px-3 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center space-x-2 ${
+                      selectedCategory === category.category
+                        ? 'bg-green-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    <IconComponent className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span>{category.name}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
-                </div>
-              </div>
-              
+        </div>
+      </div>
+      
       {/* Properties Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {loading ? (
@@ -241,24 +237,29 @@ export default function GlampingGuestExperience() {
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
           </div>
         ) : filteredProperties.length === 0 ? (
-                <div className="text-center py-12">
+          <div className="text-center py-12">
             <Mountain className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun hébergement trouvé</h3>
-            <p className="text-gray-500">Essayez de modifier vos critères de recherche</p>
-                </div>
-              ) : (
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun hébergement trouvé</h3>
+            <p className="text-gray-500">
+              {selectedCategory === 'all' 
+                ? 'Aucune propriété disponible pour le moment' 
+                : `Aucune propriété trouvée dans la catégorie "${getCategoryLabel(selectedCategory)}"`
+              }
+            </p>
+          </div>
+        ) : (
           <div className={`grid gap-4 sm:gap-6 ${
-                  viewMode === 'list' 
-                    ? 'grid-cols-1' 
-              : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-                }`}>
-                  {filteredProperties.map((property) => (
+            viewMode === 'list' 
+              ? 'grid-cols-1' 
+              : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+          }`}>
+            {filteredProperties.map((property) => (
               <div 
                 key={property.id} 
                 className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-500 cursor-pointer group"
                 onClick={() => handlePropertyClick(property.id)}
               >
-                <div className="relative h-48 sm:h-56 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
+                <div className="relative h-48 sm:h-52 lg:h-48 xl:h-52 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
                   {property.images && property.images.length > 0 ? (
                     <img 
                       src={property.images[0]} 
@@ -274,27 +275,6 @@ export default function GlampingGuestExperience() {
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
-                  <div className="absolute top-3 right-3 flex space-x-2">
-                    <button 
-                      className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg hover:bg-white transition-colors hover:scale-110"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // Handle favorite
-                      }}
-                    >
-                      <Heart className="w-4 h-4 text-gray-600" />
-                    </button>
-                    <button 
-                      className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg hover:bg-white transition-colors hover:scale-110"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // Handle share
-                      }}
-                    >
-                      <Share2 className="w-4 h-4 text-gray-600" />
-                    </button>
-                  </div>
-                  
                   <div className="absolute bottom-3 left-3">
                     <span className="bg-[#4A7C59] text-white px-3 py-2 rounded-full text-xs font-medium shadow-lg backdrop-blur-sm">
                       {getCategoryLabel(property.category)}
@@ -309,7 +289,7 @@ export default function GlampingGuestExperience() {
                     </div>
                   </div>
                 </div>
-                <div className="p-4 sm:p-6">
+                <div className="p-4 sm:p-5 lg:p-4 xl:p-5">
                   <h3 className="font-semibold text-[#2C3E37] mb-2 text-base sm:text-lg group-hover:text-green-600 transition-colors duration-300 line-clamp-1">{property.name}</h3>
                   <div className="flex items-center text-gray-600 mb-3">
                     <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
@@ -321,10 +301,6 @@ export default function GlampingGuestExperience() {
                     <div className="flex items-center text-gray-600">
                       <Bed className="w-4 h-4 mr-1" />
                       <span className="text-sm">{property.max_guests} guests</span>
-                    </div>
-                    <div className="flex items-center text-gray-600">
-                      <Bath className="w-4 h-4 mr-1" />
-                      <span className="text-sm">2 baths</span>
                     </div>
                   </div>
                   

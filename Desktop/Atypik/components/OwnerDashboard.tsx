@@ -2,26 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { 
-  LayoutDashboard, 
   Home, 
   Calendar, 
+  Euro, 
+  User, 
   Settings, 
-  Plus, 
-  Edit, 
-  Eye, 
-  Star, 
-  MapPin, 
-  Users, 
-  Euro,
-  TreePine,
-  User,
-  LogOut,
-  Search,
+  LogOut, 
+  Plus,
   Mail,
-  Phone,
   MapPin as LocationIcon
 } from 'lucide-react';
 import { useAuthContext } from './AuthProvider';
+import OwnerBookingsDashboard from './OwnerBookingsDashboard';
 
 interface Property {
   id: string;
@@ -92,8 +84,9 @@ export default function OwnerDashboard() {
         console.error('Sign out error:', result.error);
         // You could show an error message to the user here
       } else {
-        console.log('Sign out successful, redirecting to home...');
-        // The AuthProvider will handle the redirect automatically
+        console.log('Sign out successful, redirecting to old hero section...');
+        // Redirect to the old hero section
+        window.location.href = '/hero';
       }
     } catch (error) {
       console.error('Sign out exception:', error);
@@ -114,286 +107,256 @@ export default function OwnerDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-              <TreePine className="w-6 h-6 text-white" />
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-gray-900">Tableau de bord propriétaire</h1>
             </div>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                Bienvenue, {userProfile?.full_name || 'Propriétaire'}
-              </h1>
-              <p className="text-sm text-gray-600">Gérez vos propriétés et réservations</p>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600">
+                Bonjour, {userProfile?.full_name || 'Propriétaire'}
+              </span>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Déconnexion</span>
+              </button>
             </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
-              <User className="w-5 h-5" />
-              <span>Profil</span>
-            </button>
-            <button 
-              onClick={handleSignOut}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Déconnexion</span>
-            </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200 px-6 py-3">
-        <div className="flex items-center space-x-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Navigation Tabs */}
+        <div className="flex space-x-1 bg-white rounded-xl p-1 shadow-sm border border-gray-200 mb-8">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`flex items-center space-x-2 transition-colors ${
-              activeTab === 'dashboard' 
-                ? 'text-green-600 font-medium' 
-                : 'text-gray-600 hover:text-gray-900'
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              activeTab === 'dashboard'
+                ? 'bg-[#2d5016] text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <LayoutDashboard className="w-5 h-5" />
+            <Home className="w-4 h-4" />
             <span>Tableau de bord</span>
           </button>
           <button
             onClick={() => setActiveTab('properties')}
-            className={`flex items-center space-x-2 transition-colors ${
-              activeTab === 'properties' 
-                ? 'text-green-600 font-medium' 
-                : 'text-gray-600 hover:text-gray-900'
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              activeTab === 'properties'
+                ? 'bg-[#2d5016] text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Home className="w-5 h-5" />
-            <span>Mes propriétés</span>
+            <Home className="w-4 h-4" />
+            <span>Propriétés</span>
           </button>
           <button
             onClick={() => setActiveTab('bookings')}
-            className={`flex items-center space-x-2 transition-colors ${
-              activeTab === 'bookings' 
-                ? 'text-green-600 font-medium' 
-                : 'text-gray-600 hover:text-gray-900'
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              activeTab === 'bookings'
+                ? 'bg-[#2d5016] text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Calendar className="w-5 h-5" />
+            <Calendar className="w-4 h-4" />
             <span>Réservations</span>
           </button>
           <button
             onClick={() => setActiveTab('settings')}
-            className={`flex items-center space-x-2 transition-colors ${
-              activeTab === 'settings' 
-                ? 'text-green-600 font-medium' 
-                : 'text-gray-600 hover:text-gray-900'
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              activeTab === 'settings'
+                ? 'bg-[#2d5016] text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
-            <Settings className="w-5 h-5" />
+            <Settings className="w-4 h-4" />
             <span>Paramètres</span>
           </button>
         </div>
-      </nav>
 
-      {/* Main Content */}
-      <div className="p-6">
-        {activeTab === 'dashboard' && (
-          <div className="space-y-6">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Total Propriétés</p>
-                    <p className="text-2xl font-bold text-gray-900">{properties.length}</p>
+        {/* Content */}
+        <div className="p-6">
+          {activeTab === 'dashboard' && (
+            <div className="space-y-6">
+              {/* Quick Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Total Propriétés</p>
+                      <p className="text-2xl font-bold text-gray-900">{properties.length}</p>
+                    </div>
+                    <Home className="w-8 h-8 text-green-600" />
                   </div>
-                  <Home className="w-8 h-8 text-green-600" />
+                </div>
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Réservations</p>
+                      <p className="text-2xl font-bold text-gray-900">{bookings.length}</p>
+                    </div>
+                    <Calendar className="w-8 h-8 text-green-600" />
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Revenus</p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        €{bookings.reduce((sum, booking) => sum + booking.total_price, 0).toLocaleString()}
+                      </p>
+                    </div>
+                    <Euro className="w-8 h-8 text-green-600" />
+                  </div>
                 </div>
               </div>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Réservations</p>
-                    <p className="text-2xl font-bold text-gray-900">{bookings.length}</p>
-                  </div>
-                  <Calendar className="w-8 h-8 text-green-600" />
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Revenus</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      €{bookings.reduce((sum, booking) => sum + booking.total_price, 0).toLocaleString()}
-                    </p>
-                  </div>
-                  <Euro className="w-8 h-8 text-green-600" />
-                </div>
-              </div>
-            </div>
 
-            {/* Add Property Button */}
-            <div>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium flex items-center space-x-2 transition-colors shadow-sm">
-                <Plus className="w-5 h-5" />
-                <span>Ajouter une propriété</span>
-              </button>
-            </div>
-
-            {/* Properties Grid */}
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Mes propriétés</h2>
-              {properties.length === 0 ? (
-                <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
-                  <Home className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Aucune propriété</h3>
+              {/* Add Property Button */}
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Ajouter une nouvelle propriété
+                  </h3>
                   <p className="text-gray-600 mb-4">
-                    Vous n'avez pas encore de propriétés. Commencez par en ajouter une !
+                    Commencez à louer votre propriété en l'ajoutant à notre plateforme
                   </p>
-                  <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                    Ajouter ma première propriété
+                  <button className="inline-flex items-center space-x-2 bg-[#2d5016] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#1a3a0f] transition-colors">
+                    <Plus className="w-4 h-4" />
+                    <span>Ajouter une propriété</span>
                   </button>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {properties.map((property) => (
-                    <div key={property.id} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-                      <div className="relative h-48 bg-gray-200">
-                        {property.images && property.images.length > 0 ? (
-                          <img 
-                            src={property.images[0]} 
-                            alt={property.name} 
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                            <Home className="w-12 h-12 text-gray-400" />
+              </div>
+
+              {/* Recent Bookings */}
+              {bookings.length > 0 && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+                  <div className="p-6 border-b border-gray-100">
+                    <h3 className="text-lg font-semibold text-gray-900">Réservations récentes</h3>
+                  </div>
+                  <div className="divide-y divide-gray-100">
+                    {bookings.slice(0, 5).map((booking) => (
+                      <div key={booking.id} className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium text-gray-900">{booking.properties.name}</h4>
+                            <p className="text-sm text-gray-600">{booking.properties.location}</p>
+                            <p className="text-sm text-gray-500">
+                              {new Date(booking.check_in_date).toLocaleDateString()} - {new Date(booking.check_out_date).toLocaleDateString()}
+                            </p>
                           </div>
-                        )}
-                        <div className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-sm">
-                          <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                          <div className="text-right">
+                            <p className="font-semibold text-gray-900">€{booking.total_price}</p>
+                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                              booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                              booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {booking.status === 'confirmed' ? 'Confirmée' :
+                               booking.status === 'pending' ? 'En attente' : booking.status}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <div className="p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{property.name}</h3>
-                        <div className="flex items-center text-gray-600 mb-2">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          <span className="text-sm">{property.location}</span>
-                        </div>
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center text-gray-600">
-                            <Users className="w-4 h-4 mr-1" />
-                            <span className="text-sm">{property.max_guests} adultes</span>
-                          </div>
-                          <div className="text-lg font-bold text-gray-900">€{property.price_per_night}</div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-1">
-                            <Edit className="w-4 h-4" />
-                            <span>Modifier</span>
-                          </button>
-                          <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-1">
-                            <Eye className="w-4 h-4" />
-                            <span>Voir</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
-          </div>
-        )}
+          )}
 
-        {activeTab === 'properties' && (
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Mes propriétés</h2>
-            {/* Properties management content */}
-            <p className="text-gray-600">Gestion des propriétés à venir...</p>
-          </div>
-        )}
+          {activeTab === 'properties' && (
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Mes propriétés</h2>
+              {/* Properties management content */}
+              <p className="text-gray-600">Gestion des propriétés à venir...</p>
+            </div>
+          )}
 
-        {activeTab === 'bookings' && (
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Réservations</h2>
-            {/* Bookings management content */}
-            <p className="text-gray-600">Gestion des réservations à venir...</p>
-          </div>
-        )}
+          {activeTab === 'bookings' && (
+            <div>
+              <OwnerBookingsDashboard />
+            </div>
+          )}
 
-        {activeTab === 'settings' && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Paramètres</h2>
-            
-            {/* Profile Information */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center">
-                  <User className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    {userProfile?.full_name || 'Propriétaire'}
-                  </h3>
-                  <p className="text-gray-600">Propriétaire</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Mail className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Email</p>
-                      <p className="text-gray-900">{userProfile?.email || 'Non renseigné'}</p>
-                    </div>
+          {activeTab === 'settings' && (
+            <div className="space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Paramètres</h2>
+              
+              {/* Profile Information */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center">
+                    <User className="w-8 h-8 text-white" />
                   </div>
-                  
-                  {userProfile?.address && (
-                    <div className="flex items-center space-x-3">
-                      <LocationIcon className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Adresse</p>
-                        <p className="text-gray-900">{userProfile.address}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {userProfile?.what_you_own && (
-                    <div className="flex items-center space-x-3">
-                      <Home className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Ce que vous possédez</p>
-                        <p className="text-gray-900">{userProfile.what_you_own}</p>
-                      </div>
-                    </div>
-                  )}
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      {userProfile?.full_name || 'Propriétaire'}
+                    </h3>
+                    <p className="text-gray-600">Propriétaire</p>
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="font-medium text-gray-900 mb-2">Statistiques</h4>
-                    <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <Mail className="w-5 h-5 text-gray-400" />
                       <div>
-                        <p className="text-2xl font-bold text-green-600">{properties.length}</p>
-                        <p className="text-sm text-gray-600">Propriétés</p>
+                        <p className="text-sm font-medium text-gray-600">Email</p>
+                        <p className="text-gray-900">{userProfile?.email || 'Non renseigné'}</p>
                       </div>
-                      <div>
-                        <p className="text-2xl font-bold text-green-600">{bookings.length}</p>
-                        <p className="text-sm text-gray-600">Réservations</p>
+                    </div>
+                    
+                    {userProfile?.address && (
+                      <div className="flex items-center space-x-3">
+                        <LocationIcon className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">Adresse</p>
+                          <p className="text-gray-900">{userProfile.address}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {userProfile?.what_you_own && (
+                      <div className="flex items-center space-x-3">
+                        <Home className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">Ce que vous possédez</p>
+                          <p className="text-gray-900">{userProfile.what_you_own}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-900 mb-2">Statistiques</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-2xl font-bold text-green-600">{properties.length}</p>
+                          <p className="text-sm text-gray-600">Propriétés</p>
+                        </div>
+                        <div>
+                          <p className="text-2xl font-bold text-green-600">{bookings.length}</p>
+                          <p className="text-sm text-gray-600">Réservations</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                  Modifier mon profil
-                </button>
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                    Modifier mon profil
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

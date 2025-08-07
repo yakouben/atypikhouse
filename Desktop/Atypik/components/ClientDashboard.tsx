@@ -19,6 +19,7 @@ import {
   MapPin as LocationIcon
 } from 'lucide-react';
 import { useAuthContext } from './AuthProvider';
+import { useRouter } from 'next/navigation';
 
 interface Booking {
   id: string;
@@ -39,6 +40,7 @@ export default function ClientDashboard() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const router = useRouter();
 
   useEffect(() => {
     if (userProfile?.id) {
@@ -77,8 +79,9 @@ export default function ClientDashboard() {
         console.error('Sign out error:', result.error);
         // You could show an error message to the user here
       } else {
-        console.log('Sign out successful, redirecting to home...');
-        // The AuthProvider will handle the redirect automatically
+        console.log('Sign out successful, redirecting to old hero section...');
+        // Redirect to the old hero section
+        router.push('/hero');
       }
     } catch (error) {
       console.error('Sign out exception:', error);
@@ -155,64 +158,68 @@ export default function ClientDashboard() {
               <User className="w-5 h-5" />
               <span>Profil</span>
             </button>
-            <button 
-              onClick={handleSignOut}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Déconnexion</span>
-            </button>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-200 px-6 py-3">
-        <div className="flex items-center space-x-8">
-          <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`flex items-center space-x-2 transition-colors ${
-              activeTab === 'dashboard' 
-                ? 'text-green-600 font-medium' 
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <LayoutDashboard className="w-5 h-5" />
-            <span>Tableau de bord</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('properties')}
-            className={`flex items-center space-x-2 transition-colors ${
-              activeTab === 'properties' 
-                ? 'text-green-600 font-medium' 
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <Home className="w-5 h-5" />
-            <span>Parcourir</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('bookings')}
-            className={`flex items-center space-x-2 transition-colors ${
-              activeTab === 'bookings' 
-                ? 'text-green-600 font-medium' 
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <Calendar className="w-5 h-5" />
-            <span>Mes réservations</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('profile')}
-            className={`flex items-center space-x-2 transition-colors ${
-              activeTab === 'profile' 
-                ? 'text-green-600 font-medium' 
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <User className="w-5 h-5" />
-            <span>Profil</span>
-          </button>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-8">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`flex items-center space-x-2 transition-colors ${
+                activeTab === 'dashboard' 
+                  ? 'text-green-600 font-medium' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <LayoutDashboard className="w-5 h-5" />
+              <span>Tableau de bord</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('properties')}
+              className={`flex items-center space-x-2 transition-colors ${
+                activeTab === 'properties' 
+                  ? 'text-green-600 font-medium' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Home className="w-5 h-5" />
+              <span>Parcourir</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('bookings')}
+              className={`flex items-center space-x-2 transition-colors ${
+                activeTab === 'bookings' 
+                  ? 'text-green-600 font-medium' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Calendar className="w-5 h-5" />
+              <span>Mes réservations</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`flex items-center space-x-2 transition-colors ${
+                activeTab === 'profile' 
+                  ? 'text-green-600 font-medium' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <User className="w-5 h-5" />
+              <span>Profil</span>
+            </button>
+          </div>
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={handleSignOut}
+              className="flex items-center space-x-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-sm border border-red-200"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Déconnexion</span>
+            </button>
+          </div>
         </div>
       </nav>
 
