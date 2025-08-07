@@ -383,7 +383,6 @@ export default function Home() {
           )}
         </div>
       </section>
-      </div>
       
       {/* Reservation Modal */}
       <ReservationModal

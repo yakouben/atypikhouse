@@ -154,8 +154,8 @@ export async function GET(request: NextRequest) {
       `)
       .order('created_at', { ascending: false });
 
-    // Filter by owner if specified
-    if (ownerId) {
+    // Filter by owner if specified and valid
+    if (ownerId && ownerId !== 'undefined' && ownerId !== 'null') {
       query = query.eq('owner_id', ownerId);
     }
 

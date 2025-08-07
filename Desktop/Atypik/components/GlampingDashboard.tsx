@@ -68,8 +68,10 @@ export default function GlampingDashboard() {
   const [selectedPropertyName, setSelectedPropertyName] = useState<string>('');
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (userProfile?.id) {
+      loadData();
+    }
+  }, [userProfile]);
 
   const loadData = async () => {
     setLoading(true);
@@ -87,7 +89,13 @@ export default function GlampingDashboard() {
 
   const loadProperties = async () => {
     try {
-      const response = await fetch('/api/properties?ownerId=' + userProfile?.id);
+      if (!userProfile?.id) {
+        console.log('No user profile ID available, skipping properties load');
+        setProperties([]);
+        return;
+      }
+      
+      const response = await fetch(`/api/properties?ownerId=${userProfile.id}`);
       const result = await response.json();
       
       if (response.ok && result.data) {
@@ -98,13 +106,19 @@ export default function GlampingDashboard() {
       }
     } catch (error) {
       console.error('Error loading properties:', error);
-        setProperties([]);
-      }
-    };
+      setProperties([]);
+    }
+  };
 
   const loadBookings = async () => {
     try {
-      const response = await fetch('/api/bookings?ownerId=' + userProfile?.id);
+      if (!userProfile?.id) {
+        console.log('No user profile ID available, skipping bookings load');
+        setBookings([]);
+        return;
+      }
+      
+      const response = await fetch(`/api/bookings?ownerId=${userProfile.id}`);
       const result = await response.json();
       
       if (response.ok && result.data) {

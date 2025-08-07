@@ -244,11 +244,11 @@ export async function GET(request: NextRequest) {
       query = query.eq('property_id', propertyId);
     }
 
-    if (clientId) {
+    if (clientId && clientId !== 'undefined' && clientId !== 'null') {
       query = query.eq('client_id', clientId);
     }
 
-    if (ownerId) {
+    if (ownerId && ownerId !== 'undefined' && ownerId !== 'null') {
       query = query.eq('properties.owner_id', ownerId);
     }
 
