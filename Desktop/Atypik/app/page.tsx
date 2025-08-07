@@ -127,10 +127,6 @@ export default function Home() {
   const handleReservationClick = (e: React.MouseEvent, propertyId: string, propertyName: string) => {
     e.stopPropagation();
     console.log('🔍 Reservation button clicked:', { propertyId, propertyName });
-    
-    // Add a simple alert to test if the button is working
-    alert(`Réservations pour: ${propertyName} (ID: ${propertyId})`);
-    
     setSelectedPropertyId(propertyId);
     setSelectedPropertyName(propertyName);
     setShowReservationModal(true);
@@ -397,22 +393,6 @@ export default function Home() {
       </section>
       
       {/* Reservation Modal */}
-      {showReservationModal && (
-        <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-4">Test Modal</h2>
-            <p className="mb-4">Property: {selectedPropertyName}</p>
-            <p className="mb-4">ID: {selectedPropertyId}</p>
-            <button
-              onClick={handleCloseReservationModal}
-              className="bg-[#2d5016] text-white px-4 py-2 rounded-lg"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-      
       <ReservationModal
         isOpen={showReservationModal}
         onClose={handleCloseReservationModal}
