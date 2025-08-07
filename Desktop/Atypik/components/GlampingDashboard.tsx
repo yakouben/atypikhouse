@@ -36,6 +36,7 @@ import {
 import { useAuthContext } from './AuthProvider';
 import PropertyForm from './PropertyForm';
 import { useRouter } from 'next/navigation';
+import ReservationModal from '@/components/ReservationModal';
 
 interface Property {
   id: string;
@@ -62,6 +63,9 @@ export default function GlampingDashboard() {
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [deletingProperty, setDeletingProperty] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showReservationModal, setShowReservationModal] = useState(false);
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
+  const [selectedPropertyName, setSelectedPropertyName] = useState<string>('');
 
   useEffect(() => {
     loadData();
@@ -158,6 +162,19 @@ export default function GlampingDashboard() {
     
     // Force navigation
     window.location.href = `/properties/${propertyId}`;
+  };
+
+  const handleReservationClick = (e: React.MouseEvent, propertyId: string, propertyName: string) => {
+    e.stopPropagation();
+    setSelectedPropertyId(propertyId);
+    setSelectedPropertyName(propertyName);
+    setShowReservationModal(true);
+  };
+
+  const handleCloseReservationModal = () => {
+    setShowReservationModal(false);
+    setSelectedPropertyId('');
+    setSelectedPropertyName('');
   };
 
   const handleSignOut = async () => {
@@ -411,10 +428,6 @@ export default function GlampingDashboard() {
                             <Bed className="w-4 h-4 mr-1" />
                         <span className="text-sm">{property.max_guests} guests</span>
                           </div>
-                          <div className="flex items-center text-gray-600">
-                            <Bath className="w-4 h-4 mr-1" />
-                        <span className="text-sm">2 baths</span>
-                          </div>
                         </div>
                         
                         <div className="flex items-center justify-between mb-4">
@@ -449,6 +462,16 @@ export default function GlampingDashboard() {
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
+                          handleReservationClick(e, property.id, property.name);
+                        }}
+                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-1 hover:scale-105"
+                      >
+                            <Calendar className="w-4 h-4" />
+                        <span>Reserve</span>
+                          </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
                           handleDeleteProperty(property.id);
                         }}
                         disabled={deletingProperty === property.id}
@@ -479,6 +502,16 @@ export default function GlampingDashboard() {
           }}
           property={editingProperty}
           onSuccess={handlePropertySuccess}
+        />
+      )}
+
+      {/* Reservation Modal */}
+      {showReservationModal && (
+        <ReservationModal
+          isOpen={showReservationModal}
+          onClose={handleCloseReservationModal}
+          propertyId={selectedPropertyId}
+          propertyName={selectedPropertyName}
         />
       )}
     </div>

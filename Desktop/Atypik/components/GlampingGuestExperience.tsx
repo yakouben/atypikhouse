@@ -20,10 +20,12 @@ import {
   List,
   TreePine,
   User,
-  LogOut
+  LogOut,
+  Euro
 } from 'lucide-react';
 import { useAuthContext } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
+import ReservationModal from '@/components/ReservationModal';
 
 interface Property {
   id: string;
@@ -65,6 +67,8 @@ export default function GlampingGuestExperience() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
 
   useEffect(() => {
     loadProperties();
@@ -130,6 +134,16 @@ export default function GlampingGuestExperience() {
     
     // Force navigation
     window.location.href = `/properties/${propertyId}`;
+  };
+
+  const handleReserveClick = (property: Property) => {
+    setSelectedProperty(property);
+    setIsReservationModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsReservationModalOpen(false);
+    setSelectedProperty(null);
   };
 
   const filteredProperties = properties.filter(property => {
@@ -316,10 +330,11 @@ export default function GlampingGuestExperience() {
                     className="w-full bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] text-white px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg flex items-center justify-center space-x-2 text-sm sm:text-base group-hover:scale-105"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handlePropertyClick(property.id);
+                      handleReserveClick(property);
                     }}
                   >
-                    <span>View Details</span>
+                    <Euro className="w-4 h-4 mr-1" />
+                    <span>Réserver</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -328,6 +343,15 @@ export default function GlampingGuestExperience() {
           </div>
         )}
       </div>
+
+      {selectedProperty && (
+        <ReservationModal
+          isOpen={isReservationModalOpen}
+          onClose={handleCloseModal}
+          propertyId={selectedProperty.id}
+          propertyName={selectedProperty.name}
+        />
+      )}
     </div>
   );
 } 

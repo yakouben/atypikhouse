@@ -10,11 +10,13 @@ import {
   Home as HomeIcon,
   MapPin,
   Users,
-  Euro
+  Euro,
+  Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthContext } from '@/components/AuthProvider';
 import HeroSection from '@/components/HeroSection';
+import ReservationModal from '@/components/ReservationModal';
 
 // Only the 4 database categories
 const accommodationCategories = [
@@ -85,6 +87,9 @@ export default function Home() {
   const [propertiesLoading, setPropertiesLoading] = useState(true);
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [showReservationModal, setShowReservationModal] = useState(false);
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
+  const [selectedPropertyName, setSelectedPropertyName] = useState<string>('');
   const router = useRouter();
 
   useEffect(() => {
@@ -117,6 +122,19 @@ export default function Home() {
 
   const handlePropertyClick = (propertyId: string) => {
     router.push(`/properties/${propertyId}`);
+  };
+
+  const handleReservationClick = (e: React.MouseEvent, propertyId: string, propertyName: string) => {
+    e.stopPropagation();
+    setSelectedPropertyId(propertyId);
+    setSelectedPropertyName(propertyName);
+    setShowReservationModal(true);
+  };
+
+  const handleCloseReservationModal = () => {
+    setShowReservationModal(false);
+    setSelectedPropertyId('');
+    setSelectedPropertyName('');
   };
 
   const getCategoryIcon = (category: string) => {
@@ -343,9 +361,18 @@ export default function Home() {
                           </div>
                         </div>
                         
-                        <div className="flex items-center space-x-1 text-[#2d5016] font-semibold">
-                          <Euro className="w-4 h-4" />
-                          <span>{property.price_per_night}</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-1 text-[#2d5016] font-semibold">
+                            <Euro className="w-4 h-4" />
+                            <span>{property.price_per_night}</span>
+                          </div>
+                          <button
+                            onClick={(e) => handleReservationClick(e, property.id, property.name)}
+                            className="flex items-center space-x-1 bg-[#2d5016] text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-[#1a3a0f] transition-colors"
+                          >
+                            <Calendar className="w-3 h-3" />
+                            <span>Réservations</span>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -357,5 +384,14 @@ export default function Home() {
         </div>
       </section>
       </div>
+      
+      {/* Reservation Modal */}
+      <ReservationModal
+        isOpen={showReservationModal}
+        onClose={handleCloseReservationModal}
+        propertyId={selectedPropertyId}
+        propertyName={selectedPropertyName}
+      />
+    </div>
   );
 }

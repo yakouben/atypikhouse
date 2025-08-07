@@ -1,7 +1,22 @@
 "use client";
 
-import LoginForm from '@/components/LoginForm';
+import { useState } from 'react';
+import SignInModal from '@/components/SignInModal';
 
 export default function LoginPage() {
-  return <LoginForm />;
+  const [isOpen, setIsOpen] = useState(true);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    // Redirect to home page when modal is closed
+    window.location.href = '/';
+  };
+
+  return (
+    <SignInModal 
+      isOpen={isOpen} 
+      onClose={handleClose}
+      initialStep="login"
+    />
+  );
 } 
