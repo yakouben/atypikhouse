@@ -149,7 +149,7 @@ export default function PropertyDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#2d5016]"></div>
       </div>
     );
@@ -157,7 +157,7 @@ export default function PropertyDetailPage() {
 
   if (!property) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-[#333333] mb-4">Property not found</h1>
           <Button onClick={() => router.back()} className="bg-[#2d5016] hover:bg-[#1a3a0f] text-white">
@@ -189,291 +189,284 @@ export default function PropertyDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header - Clean, minimal top bar */}
-      <div className="bg-white shadow-sm border-b border-[#696969]/20 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Close button on top left */}
-            <button
-              onClick={() => router.back()}
-              className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-            >
-              <X className="w-5 h-5 text-[#333333]" />
-            </button>
+    <div className="min-h-screen bg-gray-100">
+      {/* Image Section - Full width with bottom border radius */}
+      <div className="relative">
+        {property.images && property.images.length > 0 ? (
+          <div className="relative h-80 sm:h-96 bg-gray-200">
+            <img
+              src={property.images[selectedImage]}
+              alt={property.name}
+              className="w-full h-full object-cover rounded-b-3xl"
+            />
             
-            {/* Floating action buttons on top right */}
-            <div className="flex items-center space-x-2">
-              <button className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
-                <Share2 className="w-5 h-5 text-[#333333]" />
-              </button>
-              <button className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
-                <Heart className="w-5 h-5 text-[#333333]" />
-              </button>
+            {/* Header overlay */}
+            <div className="absolute top-0 left-0 right-0 z-10">
+              <div className="flex items-center justify-between p-4">
+                {/* Close button */}
+                <button
+                  onClick={() => router.back()}
+                  className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+                >
+                  <X className="w-5 h-5 text-[#333333]" />
+                </button>
+                
+                {/* Share button */}
+                <button className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
+                  <Share2 className="w-5 h-5 text-[#333333]" />
+                </button>
+              </div>
             </div>
+            
+            {/* Image counter overlay */}
+            <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+              {selectedImage + 1} / {property.images.length}
+            </div>
+            
+            {/* Navigation arrows */}
+            {property.images.length > 1 && (
+              <>
+                <button
+                  onClick={prevImage}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5 text-[#333333]" />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+                >
+                  <ChevronRight className="w-5 h-5 text-[#333333]" />
+                </button>
+              </>
+            )}
           </div>
-        </div>
+        ) : (
+          <div className="h-80 sm:h-96 bg-gray-200 rounded-b-3xl flex items-center justify-center">
+            <span className="text-[#696969] text-sm sm:text-base">No images available</span>
+          </div>
+        )}
+        
+        {/* Carousel indicators */}
+        {property.images && property.images.length > 1 && (
+          <div className="flex justify-center mt-4 space-x-2">
+            {property.images.map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index === selectedImage ? 'bg-[#2d5016]' : 'bg-[#696969]/30'
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        {/* Property Title & Rating Section - Enhanced typography */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#333333] mb-3">
-            {property.name}
-          </h1>
-          
-          {/* Star rating system */}
-          <div className="flex items-center space-x-2 mb-2">
-            <Star className="w-5 h-5 text-[#daa520] fill-current" />
-            <span className="font-bold text-[#333333] text-lg">4.92</span>
-            <span className="text-[#696969] text-sm">(116 reviews)</span>
+      {/* Property Details Card */}
+      <div className="bg-white rounded-t-3xl -mt-6 relative z-20 min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          {/* Property Title & Rating Section */}
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#333333] mb-3">
+              {property.name}
+            </h1>
+            
+            {/* Star rating system */}
+            <div className="flex items-center space-x-2 mb-2">
+              <Star className="w-5 h-5 text-[#daa520] fill-current" />
+              <span className="font-bold text-[#333333] text-lg">4.92</span>
+              <span className="text-[#696969] text-sm">(116 reviews)</span>
+            </div>
+            
+            {/* Property type and host information */}
+            <div className="flex items-center space-x-2 mb-3">
+              <span className="text-[#333333] font-medium">Entire home</span>
+              <span className="text-[#696969]">•</span>
+              <span className="text-[#333333]">Hosted by {userProfile?.full_name?.split(' ')[0] || 'Host'}</span>
+            </div>
+            
+            {/* Location with pin icon */}
+            <div className="flex items-center text-[#333333]">
+              <MapPin className="w-4 h-4 mr-2 text-[#2d5016]" />
+              <span className="text-sm sm:text-base font-medium">{property.location}</span>
+            </div>
           </div>
-          
-          {/* Property type and host information */}
-          <div className="flex items-center space-x-2 mb-3">
-            <span className="text-[#333333] font-medium">Entire home</span>
-            <span className="text-[#696969]">•</span>
-            <span className="text-[#333333]">Hosted by {userProfile?.full_name?.split(' ')[0] || 'Host'}</span>
-          </div>
-          
-          {/* Location with pin icon */}
-          <div className="flex items-center text-[#333333]">
-            <MapPin className="w-4 h-4 mr-2 text-[#2d5016]" />
-            <span className="text-sm sm:text-base font-medium">{property.location}</span>
-          </div>
-        </div>
 
-        {/* Image Gallery - Full-width carousel slider */}
-        <div className="mb-6 sm:mb-8">
-          {property.images && property.images.length > 0 ? (
+          {/* Property Tags - Rounded pill buttons */}
+          <div className="flex flex-wrap gap-2 mb-6 sm:mb-8">
+            {getCategoryTags(property.category).map((tag, index) => (
+              <Badge 
+                key={index} 
+                className="px-4 py-2 bg-[#87a96b]/20 text-[#333333] border border-[#87a96b]/30 rounded-full font-medium hover:bg-[#87a96b]/30 transition-colors"
+              >
+                {tag}
+              </Badge>
+            ))}
+          </div>
+
+          {/* Amenities Section - 2x2 grid layout */}
+          <div className="mb-6 sm:mb-8">
+            <h3 className="text-lg sm:text-xl font-bold text-[#333333] mb-4">Amenities</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
+                <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
+                  <Wifi className="w-5 h-5 text-[#2d5016]" />
+                </div>
+                <span className="font-medium text-[#333333]">Wi-Fi</span>
+              </div>
+              <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
+                <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
+                  <Bed className="w-5 h-5 text-[#2d5016]" />
+                </div>
+                <span className="font-medium text-[#333333]">King Bed</span>
+              </div>
+              <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
+                <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
+                  <Bath className="w-5 h-5 text-[#2d5016]" />
+                </div>
+                <span className="font-medium text-[#333333]">Bathup</span>
+              </div>
+              <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
+                <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
+                  <Coffee className="w-5 h-5 text-[#2d5016]" />
+                </div>
+                <span className="font-medium text-[#333333]">Breakfast</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Tab Navigation - Enhanced with underline indicator */}
+          <div className="border-b border-[#696969]/20 mb-6 sm:mb-8">
+            <nav className="flex space-x-6 sm:space-x-8 overflow-x-auto">
+              {['description', 'feature', 'virtual', 'reviews'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`py-3 px-1 border-b-2 font-medium text-sm sm:text-base capitalize whitespace-nowrap transition-colors ${
+                    activeTab === tab
+                      ? 'border-[#2d5016] text-[#2d5016]'
+                      : 'border-transparent text-[#696969] hover:text-[#333333] hover:border-[#696969]/30'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          {/* Tab Content - Enhanced styling */}
+          <div className="mb-6 sm:mb-8">
+            {activeTab === 'description' && (
+              <div>
+                <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Our House</h3>
+                <div className="prose max-w-none">
+                  <p className="text-[#333333] leading-relaxed text-sm sm:text-base">
+                    {property.description || `Experience the ultimate comfort and luxury in our ${getCategoryLabel(property.category)}. 
+                    This deluxe accommodation offers a perfect blend of modern amenities and natural beauty, 
+                    making it ideal for couples, families, or solo travelers seeking a unique and memorable stay. 
+                    With ${property.max_guests} guests capacity and stunning views, this property provides everything 
+                    you need for a relaxing and enjoyable vacation.`}
+                  </p>
+                  <p className="text-[#333333] leading-relaxed mt-4 text-sm sm:text-base">
+                    The property features comfortable sleeping arrangements, modern bathroom facilities, 
+                    and a cozy living space designed for your comfort. Whether you're looking for a romantic getaway, 
+                    a family vacation, or a peaceful retreat, this accommodation offers the perfect setting 
+                    for creating lasting memories.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'feature' && (
+              <div>
+                <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Features & Amenities</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                    <Wifi className="w-5 h-5 text-[#2d5016]" />
+                    <span className="text-[#333333] font-medium">Free WiFi</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                    <Bed className="w-5 h-5 text-[#2d5016]" />
+                    <span className="text-[#333333] font-medium">Comfortable Bedding</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                    <Bath className="w-5 h-5 text-[#2d5016]" />
+                    <span className="text-[#333333] font-medium">Private Bathroom</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                    <Coffee className="w-5 h-5 text-[#2d5016]" />
+                    <span className="text-[#333333] font-medium">Breakfast Included</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                    <Users className="w-5 h-5 text-[#2d5016]" />
+                    <span className="text-[#333333] font-medium">Max {property.max_guests} Guests</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
+                    <Euro className="w-5 h-5 text-[#2d5016]" />
+                    <span className="text-[#333333] font-medium">€{property.price_per_night}/night</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'virtual' && (
+              <div>
+                <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Virtual Tour</h3>
+                <div className="bg-white rounded-2xl h-48 sm:h-64 flex items-center justify-center shadow-sm border border-[#696969]/20">
+                  <span className="text-[#696969] text-sm sm:text-base">Virtual tour coming soon</span>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'reviews' && (
+              <div>
+                <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Reviews</h3>
+                <div className="bg-white rounded-2xl h-48 sm:h-64 flex items-center justify-center shadow-sm border border-[#696969]/20">
+                  <span className="text-[#696969] text-sm sm:text-base">Reviews coming soon</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Enhanced Map Section */}
+          <div className="mb-6 sm:mb-8">
+            <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Location</h3>
             <div className="relative">
-              {/* Full-width carousel */}
               <div className="relative h-64 sm:h-80 bg-gray-200 rounded-2xl overflow-hidden shadow-lg">
-                <img
-                  src={property.images[selectedImage]}
-                  alt={property.name}
-                  className="w-full h-full object-cover"
+                <iframe
+                  src={property.maps_link?.includes('embed') ? property.maps_link : `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(property.location)}`}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="rounded-2xl"
                 />
                 
-                {/* Image counter overlay */}
-                <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
-                  {selectedImage + 1} / {property.images.length}
+                {/* Map Overlay with Info */}
+                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-[#696969]/20">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-[#2d5016]/10 rounded-full flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-[#2d5016]" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-[#333333] text-sm sm:text-base">Property Location</h4>
+                      <p className="text-[#696969] text-xs sm:text-sm">{property.location}</p>
+                    </div>
+                  </div>
                 </div>
                 
-                {/* Navigation arrows */}
-                {property.images.length > 1 && (
-                  <>
-                    <button
-                      onClick={prevImage}
-                      className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
-                    >
-                      <ChevronLeft className="w-5 h-5 text-[#333333]" />
-                    </button>
-                    <button
-                      onClick={nextImage}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
-                    >
-                      <ChevronRight className="w-5 h-5 text-[#333333]" />
-                    </button>
-                  </>
-                )}
-              </div>
-              
-              {/* Carousel indicators */}
-              {property.images.length > 1 && (
-                <div className="flex justify-center mt-4 space-x-2">
-                  {property.images.map((_, index) => (
-                    <div
-                      key={index}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        index === selectedImage ? 'bg-[#2d5016]' : 'bg-[#696969]/30'
-                      }`}
-                    />
-                  ))}
+                {/* Open in Maps Button */}
+                <div className="absolute bottom-4 right-4">
+                  <Button
+                    onClick={() => window.open(property.maps_link || `https://www.google.com/maps/search/${encodeURIComponent(property.location)}`, '_blank')}
+                    className="bg-white/95 backdrop-blur-sm text-[#333333] hover:bg-white shadow-xl border border-[#696969]/20 flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span className="text-sm font-medium">Open in Maps</span>
+                  </Button>
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="h-64 sm:h-80 bg-gray-200 rounded-2xl flex items-center justify-center">
-              <span className="text-[#696969] text-sm sm:text-base">No images available</span>
-            </div>
-          )}
-        </div>
-
-        {/* Property Tags - Rounded pill buttons */}
-        <div className="flex flex-wrap gap-2 mb-6 sm:mb-8">
-          {getCategoryTags(property.category).map((tag, index) => (
-            <Badge 
-              key={index} 
-              className="px-4 py-2 bg-[#87a96b]/20 text-[#333333] border border-[#87a96b]/30 rounded-full font-medium hover:bg-[#87a96b]/30 transition-colors"
-            >
-              {tag}
-            </Badge>
-          ))}
-        </div>
-
-        {/* Amenities Section - 2x2 grid layout */}
-        <div className="mb-6 sm:mb-8">
-          <h3 className="text-lg sm:text-xl font-bold text-[#333333] mb-4">Amenities</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
-              <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
-                <Wifi className="w-5 h-5 text-[#2d5016]" />
-              </div>
-              <span className="font-medium text-[#333333]">Wi-Fi</span>
-            </div>
-            <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
-              <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
-                <Bed className="w-5 h-5 text-[#2d5016]" />
-              </div>
-              <span className="font-medium text-[#333333]">King Bed</span>
-            </div>
-            <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
-              <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
-                <Bath className="w-5 h-5 text-[#2d5016]" />
-              </div>
-              <span className="font-medium text-[#333333]">Bathup</span>
-            </div>
-            <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-[#696969]/20">
-              <div className="w-10 h-10 bg-[#2d5016]/10 rounded-lg flex items-center justify-center">
-                <Coffee className="w-5 h-5 text-[#2d5016]" />
-              </div>
-              <span className="font-medium text-[#333333]">Breakfast</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Tab Navigation - Enhanced with underline indicator */}
-        <div className="border-b border-[#696969]/20 mb-6 sm:mb-8">
-          <nav className="flex space-x-6 sm:space-x-8 overflow-x-auto">
-            {['description', 'feature', 'virtual', 'reviews'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`py-3 px-1 border-b-2 font-medium text-sm sm:text-base capitalize whitespace-nowrap transition-colors ${
-                  activeTab === tab
-                    ? 'border-[#2d5016] text-[#2d5016]'
-                    : 'border-transparent text-[#696969] hover:text-[#333333] hover:border-[#696969]/30'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* Tab Content - Enhanced styling */}
-        <div className="mb-6 sm:mb-8">
-          {activeTab === 'description' && (
-            <div>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Our House</h3>
-              <div className="prose max-w-none">
-                <p className="text-[#333333] leading-relaxed text-sm sm:text-base">
-                  {property.description || `Experience the ultimate comfort and luxury in our ${getCategoryLabel(property.category)}. 
-                  This deluxe accommodation offers a perfect blend of modern amenities and natural beauty, 
-                  making it ideal for couples, families, or solo travelers seeking a unique and memorable stay. 
-                  With ${property.max_guests} guests capacity and stunning views, this property provides everything 
-                  you need for a relaxing and enjoyable vacation.`}
-                </p>
-                <p className="text-[#333333] leading-relaxed mt-4 text-sm sm:text-base">
-                  The property features comfortable sleeping arrangements, modern bathroom facilities, 
-                  and a cozy living space designed for your comfort. Whether you're looking for a romantic getaway, 
-                  a family vacation, or a peaceful retreat, this accommodation offers the perfect setting 
-                  for creating lasting memories.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'feature' && (
-            <div>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Features & Amenities</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
-                  <Wifi className="w-5 h-5 text-[#2d5016]" />
-                  <span className="text-[#333333] font-medium">Free WiFi</span>
-                </div>
-                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
-                  <Bed className="w-5 h-5 text-[#2d5016]" />
-                  <span className="text-[#333333] font-medium">Comfortable Bedding</span>
-                </div>
-                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
-                  <Bath className="w-5 h-5 text-[#2d5016]" />
-                  <span className="text-[#333333] font-medium">Private Bathroom</span>
-                </div>
-                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
-                  <Coffee className="w-5 h-5 text-[#2d5016]" />
-                  <span className="text-[#333333] font-medium">Breakfast Included</span>
-                </div>
-                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
-                  <Users className="w-5 h-5 text-[#2d5016]" />
-                  <span className="text-[#333333] font-medium">Max {property.max_guests} Guests</span>
-                </div>
-                <div className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm">
-                  <Euro className="w-5 h-5 text-[#2d5016]" />
-                  <span className="text-[#333333] font-medium">€{property.price_per_night}/night</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'virtual' && (
-            <div>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Virtual Tour</h3>
-              <div className="bg-white rounded-2xl h-48 sm:h-64 flex items-center justify-center shadow-sm border border-[#696969]/20">
-                <span className="text-[#696969] text-sm sm:text-base">Virtual tour coming soon</span>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'reviews' && (
-            <div>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Reviews</h3>
-              <div className="bg-white rounded-2xl h-48 sm:h-64 flex items-center justify-center shadow-sm border border-[#696969]/20">
-                <span className="text-[#696969] text-sm sm:text-base">Reviews coming soon</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Enhanced Map Section */}
-        <div className="mb-6 sm:mb-8">
-          <h3 className="text-xl sm:text-2xl font-bold text-[#333333] mb-4">Location</h3>
-          <div className="relative">
-            <div className="relative h-64 sm:h-80 bg-gray-200 rounded-2xl overflow-hidden shadow-lg">
-              <iframe
-                src={property.maps_link?.includes('embed') ? property.maps_link : `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(property.location)}`}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="rounded-2xl"
-              />
-              
-              {/* Map Overlay with Info */}
-              <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-[#696969]/20">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-[#2d5016]/10 rounded-full flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-[#2d5016]" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-[#333333] text-sm sm:text-base">Property Location</h4>
-                    <p className="text-[#696969] text-xs sm:text-sm">{property.location}</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Open in Maps Button */}
-              <div className="absolute bottom-4 right-4">
-                <Button
-                  onClick={() => window.open(property.maps_link || `https://www.google.com/maps/search/${encodeURIComponent(property.location)}`, '_blank')}
-                  className="bg-white/95 backdrop-blur-sm text-[#333333] hover:bg-white shadow-xl border border-[#696969]/20 flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  <span className="text-sm font-medium">Open in Maps</span>
-                </Button>
               </div>
             </div>
           </div>
