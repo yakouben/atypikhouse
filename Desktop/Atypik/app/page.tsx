@@ -126,12 +126,15 @@ export default function Home() {
 
   const handleReservationClick = (e: React.MouseEvent, propertyId: string, propertyName: string) => {
     e.stopPropagation();
+    console.log('🔍 Reservation button clicked:', { propertyId, propertyName });
     setSelectedPropertyId(propertyId);
     setSelectedPropertyName(propertyName);
     setShowReservationModal(true);
+    console.log('🔍 Modal state updated:', { showReservationModal: true, selectedPropertyId: propertyId });
   };
 
   const handleCloseReservationModal = () => {
+    console.log('🔍 Closing reservation modal');
     setShowReservationModal(false);
     setSelectedPropertyId('');
     setSelectedPropertyName('');
@@ -367,7 +370,12 @@ export default function Home() {
                             <span>{property.price_per_night}</span>
                           </div>
                           <button
-                            onClick={(e) => handleReservationClick(e, property.id, property.name)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log('🔍 Button clicked directly:', property.id, property.name);
+                              handleReservationClick(e, property.id, property.name);
+                            }}
                             className="flex items-center space-x-1 bg-[#2d5016] text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-[#1a3a0f] transition-colors"
                           >
                             <Calendar className="w-3 h-3" />
@@ -385,6 +393,16 @@ export default function Home() {
       </section>
       
       {/* Reservation Modal */}
+      {showReservationModal && (
+        <div className="fixed inset-0 bg-red-500 z-[9999] flex items-center justify-center">
+          <div className="bg-white p-8 rounded-lg">
+            <h2>Test Modal - {selectedPropertyName}</h2>
+            <p>Property ID: {selectedPropertyId}</p>
+            <button onClick={handleCloseReservationModal}>Close</button>
+          </div>
+        </div>
+      )}
+      
       <ReservationModal
         isOpen={showReservationModal}
         onClose={handleCloseReservationModal}

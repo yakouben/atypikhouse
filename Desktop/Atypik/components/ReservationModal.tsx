@@ -57,7 +57,9 @@ export default function ReservationModal({ isOpen, onClose, propertyId, property
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('🔍 ReservationModal useEffect:', { isOpen, propertyId });
     if (isOpen && propertyId) {
+      console.log('🔍 Loading reservations for property:', propertyId);
       loadReservations();
     }
   }, [isOpen, propertyId]);
@@ -67,14 +69,19 @@ export default function ReservationModal({ isOpen, onClose, propertyId, property
       setLoading(true);
       setError(null);
       
+      console.log('🔍 Fetching reservations from:', `/api/bookings?propertyId=${propertyId}`);
       const response = await fetch(`/api/bookings?propertyId=${propertyId}`);
       const result = await response.json();
       
+      console.log('🔍 Reservation response:', result);
+      
       if (response.ok && result.data) {
         setReservations(result.data);
+        console.log('🔍 Reservations loaded:', result.data.length);
       } else {
         setError(result.error || 'Failed to load reservations');
         setReservations([]);
+        console.error('🔍 Error loading reservations:', result.error);
       }
     } catch (error) {
       console.error('Error loading reservations:', error);
@@ -135,9 +142,11 @@ export default function ReservationModal({ isOpen, onClose, propertyId, property
 
   if (!isOpen) return null;
 
+  console.log('🔍 Rendering ReservationModal:', { isOpen, propertyId, propertyName });
+
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden relative">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
