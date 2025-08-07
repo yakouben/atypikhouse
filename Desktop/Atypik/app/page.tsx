@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Search, Calendar, Users, Heart, Share2, Star, Map, Grid3X3, List, HomeIcon, Filter, X, Menu, ArrowRight, TreePine, Tent, Anchor, Mountain } from 'lucide-react';
+import { Search, Calendar, Users, Heart, Share2, Star, Map, Grid3X3, List, HomeIcon, Filter, X, Menu, ArrowRight, TreePine, Tent, Anchor, Mountain, MapPin, Bed, Bath } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -68,113 +68,20 @@ const accommodationCategories = [
   },
 ];
 
-const properties = [
-  {
-    id: 1,
-    name: 'Eco Lodge',
-    type: 'Tiny house',
-    rating: 4.78,
-    nights: 6,
-    adults: 2,
-    price: 1089,
-    originalPrice: 1389,
-    image: 'https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=400',
-    care: 'Eco-friendly & Sustainable',
-    location: 'Pierrefonds, Oise',
-    slug: 'eco-lodge-pierrefonds'
-  },
-  {
-    id: 2,
-    name: 'Redwood Retreat',
-    type: 'Cabane',
-    rating: 4.88,
-    nights: 6,
-    adults: 2,
-    price: 720,
-    image: 'https://images.pexels.com/photos/1134166/pexels-photo-1134166.jpeg?auto=compress&cs=tinysrgb&w=400',
-    care: 'Nature Immersion',
-    location: 'Forêt de Compiègne',
-    slug: 'redwood-retreat-compiegne'
-  },
-  {
-    id: 3,
-    name: 'Sun Shores',
-    type: 'A-frame',
-    rating: 4.96,
-    nights: 6,
-    adults: 2,
-    price: 1172,
-    image: 'https://images.pexels.com/photos/2251247/pexels-photo-2251247.jpeg?auto=compress&cs=tinysrgb&w=400',
-    care: 'Mountain Views',
-    location: 'Alpes françaises',
-    slug: 'sun-shores-alpes'
-  },
-  {
-    id: 4,
-    name: 'Eco Haven',
-    type: 'Cabane',
-    rating: 4.72,
-    nights: 6,
-    adults: 2,
-    price: 980,
-    image: 'https://images.pexels.com/photos/1029604/pexels-photo-1029604.jpeg?auto=compress&cs=tinysrgb&w=400',
-    care: 'Lakeside Serenity',
-    location: 'Lac de l\'Ailette',
-    slug: 'eco-haven-lac-aillette'
-  },
-  {
-    id: 5,
-    name: 'Nature Harmony',
-    type: '',
-    rating: 4.73,
-    nights: 6,
-    adults: 2,
-    price: 850,
-    image: 'https://images.pexels.com/photos/2724749/pexels-photo-2724749.jpeg?auto=compress&cs=tinysrgb&w=400',
-    care: 'Forest Retreat',
-    location: 'Forêt de Retz',
-    slug: 'nature-harmony-foret-retz'
-  },
-  {
-    id: 6,
-    name: 'Quiet Cove',
-    type: '',
-    rating: 4.53,
-    nights: 6,
-    adults: 2,
-    price: 650,
-    image: 'https://images.pexels.com/photos/1732414/pexels-photo-1732414.jpeg?auto=compress&cs=tinysrgb&w=400',
-    care: 'Secluded Paradise',
-    location: 'Côte d\'Azur',
-    slug: 'quiet-cove-cote-azur'
-  },
-  {
-    id: 7,
-    name: 'Lakeside Eco Nook',
-    type: '',
-    rating: 4.91,
-    nights: 6,
-    adults: 2,
-    price: 920,
-    image: 'https://images.pexels.com/photos/2962135/pexels-photo-2962135.jpeg?auto=compress&cs=tinysrgb&w=400',
-    care: 'Waterfront Luxury',
-    location: 'Lac du Der',
-    slug: 'lakeside-eco-nook-lac-der'
-  },
-  {
-    id: 8,
-    name: 'Forest Refuge',
-    type: '',
-    rating: 4.85,
-    nights: 6,
-    adults: 2,
-    price: 780,
-    image: 'https://images.pexels.com/photos/1438832/pexels-photo-1438832.jpeg?auto=compress&cs=tinysrgb&w=400',
-    care: 'Wilderness Escape',
-    location: 'Vosges',
-    slug: 'forest-refuge-vosges'
-  },
-];
+interface Property {
+  id: string;
+  name: string;
+  category: string;
+  location: string;
+  price_per_night: number;
+  max_guests: number;
+  description: string;
+  images: string[];
+  is_published: boolean;
+  is_available: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 export default function Home() {
   const { user, userProfile, loading } = useAuthContext();
@@ -188,6 +95,8 @@ export default function Home() {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [signInMode, setSignInMode] = useState<'login' | 'signup' | 'userType'>('login');
   const [userType, setUserType] = useState<'owner' | 'client' | null>(null);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [propertiesLoading, setPropertiesLoading] = useState(true);
 
   // Redirect to dashboard if user is already authenticated
   useEffect(() => {
@@ -200,6 +109,36 @@ export default function Home() {
       }
     }
   }, [user, userProfile, loading, router]);
+
+  // Load properties
+  useEffect(() => {
+    loadProperties();
+  }, []);
+
+  const loadProperties = async () => {
+    setPropertiesLoading(true);
+    try {
+      const response = await fetch('/api/properties?published=true&available=true');
+      const result = await response.json();
+      
+      if (response.ok && result.data) {
+        setProperties(result.data);
+        console.log('✅ Properties loaded successfully:', result.data);
+        console.log('✅ Number of properties:', result.data.length);
+        if (result.data.length > 0) {
+          console.log('✅ First property:', result.data[0]);
+        }
+      } else {
+        console.error('❌ Error loading properties:', result.error);
+        setProperties([]);
+      }
+    } catch (error) {
+      console.error('❌ Error loading properties:', error);
+      setProperties([]);
+    } finally {
+      setPropertiesLoading(false);
+    }
+  };
 
   const togglePropertyType = (type: string) => {
     if (type === 'Tous') {
@@ -233,6 +172,25 @@ export default function Home() {
     setShowSignInModal(false);
     setSignInMode('login');
     setUserType(null);
+  };
+
+  const handlePropertyClick = (propertyId: string) => {
+    console.log('🔍 Navigating to property:', propertyId);
+    console.log('🔍 Current URL:', window.location.href);
+    console.log('🔍 Target URL:', `/properties/${propertyId}`);
+    
+    // Force navigation
+    window.location.href = `/properties/${propertyId}`;
+  };
+
+  const getCategoryLabel = (category: string) => {
+    const categories = {
+      'cabane_arbre': 'Cabanes dans les arbres',
+      'yourte': 'Yourtes',
+      'cabane_flottante': 'Cabanes flottantes',
+      'autre': 'Autre hébergement'
+    };
+    return categories[category as keyof typeof categories] || category;
   };
 
   // Show loading state while checking authentication
@@ -357,7 +315,7 @@ export default function Home() {
           <div className="flex flex-col gap-4 lg:gap-6">
           {/* Mobile Filter Button */}
           <div className="lg:hidden flex items-center justify-between mb-4">
-            <span className="text-gray-700 font-medium">1258 variants</span>
+            <span className="text-gray-700 font-medium">{properties.length} variants</span>
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
@@ -502,7 +460,7 @@ export default function Home() {
                           <Checkbox id="all-rating-mobile" defaultChecked />
                           <label htmlFor="all-rating-mobile" className="text-sm text-gray-700">All</label>
                         </div>
-                        <span className="text-sm text-gray-500">1258</span>
+                        <span className="text-sm text-gray-500">{properties.length}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
@@ -545,7 +503,7 @@ export default function Home() {
             <div className="w-full">
             {/* Desktop Results Header */}
             <div className="hidden lg:flex items-center justify-between mb-6">
-              <span className="text-gray-700 font-medium">1258 variants</span>
+              <span className="text-gray-700 font-medium">{properties.length} variants</span>
               <div className="flex items-center space-x-2">
                 <Button
                   variant={viewType === 'grid' ? 'default' : 'outline'}
@@ -567,72 +525,120 @@ export default function Home() {
             </div>
 
             {/* Property Grid */}
-              <div className={`grid gap-6 ${
-              viewType === 'list' 
-                ? 'grid-cols-1' 
-                  : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'
-            }`}>
-              {properties.map((property) => (
-                  <div key={property.id} className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
+            {propertiesLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+              </div>
+            ) : properties.length === 0 ? (
+              <div className="text-center py-12">
+                <Mountain className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun hébergement trouvé</h3>
+                <p className="text-gray-500">Aucune propriété disponible pour le moment</p>
+              </div>
+            ) : (
+              <div className={`grid gap-4 sm:gap-6 ${
+                viewType === 'list' 
+                  ? 'grid-cols-1' 
+                  : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+              }`}>
+                {properties.map((property) => (
+                  <div 
+                    key={property.id} 
+                    className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group cursor-pointer border border-gray-100 hover:border-green-200"
+                    onClick={() => {
+                      console.log('🎯 Property clicked:', property.id, property.name);
+                      handlePropertyClick(property.id);
+                    }}
+                  >
                     {/* Image Section */}
-                  <div className="relative">
-                      <OptimizedImage
-                      src={property.image}
-                        alt={`${property.name} - AtypikHouse`}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="w-full h-64 object-cover rounded-t-3xl group-hover:scale-105 transition-transform duration-300"
-                      />
+                    <div className="relative overflow-hidden">
+                      {property.images && property.images.length > 0 ? (
+                        <img
+                          src={property.images[0]}
+                          alt={`${property.name} - AtypikHouse`}
+                          className="w-full h-48 sm:h-64 object-cover rounded-t-2xl sm:rounded-t-3xl group-hover:scale-110 transition-transform duration-700"
+                          onError={(e) => {
+                            console.log('❌ Image failed to load:', property.images[0]);
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-48 sm:h-64 bg-gradient-to-br from-gray-200 to-gray-300 rounded-t-2xl sm:rounded-t-3xl flex items-center justify-center">
+                          <Mountain className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400" />
+                        </div>
+                      )}
+                      
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       
                       {/* Favorite Button */}
-                      <button className="absolute top-4 left-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300">
-                        <Heart className="w-5 h-5 text-white" />
+                      <button 
+                        className="absolute top-3 left-3 w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 shadow-lg hover:scale-110"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Handle favorite
+                        }}
+                      >
+                        <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                       </button>
                       
                       {/* Rating Badge */}
-                      <div className="absolute top-4 right-4">
-                        <div className="flex items-center space-x-1 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
-                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-semibold text-gray-900">{property.rating}</span>
+                      <div className="absolute top-3 right-3">
+                        <div className="flex items-center space-x-1 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 sm:px-3 shadow-lg">
+                          <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                          <span className="text-xs sm:text-sm font-semibold text-gray-900">4.9</span>
                         </div>
                       </div>
                       
                       {/* Property Type Badge */}
-                      {property.type && (
-                        <div className="absolute bottom-4 left-4">
-                          <Badge className="bg-green-600 text-white border-0 px-3 py-1 rounded-full text-xs font-medium">
-                            {property.type}
-                          </Badge>
-                    </div>
-                      )}
+                      <div className="absolute bottom-3 left-3">
+                        <Badge className="bg-green-600 text-white border-0 px-2 py-1 sm:px-3 rounded-full text-xs font-medium shadow-lg backdrop-blur-sm">
+                          {getCategoryLabel(property.category)}
+                        </Badge>
+                      </div>
+                      
+                      {/* Price Tag */}
+                      <div className="absolute bottom-3 right-3">
+                        <div className="bg-white/95 backdrop-blur-sm rounded-full px-3 py-2 shadow-lg border border-gray-100">
+                          <span className="text-sm sm:text-base font-bold text-gray-900">€{property.price_per_night}</span>
+                          <span className="text-xs text-gray-600 ml-1">/night</span>
+                        </div>
+                      </div>
                     </div>
                     
                     {/* Content Section */}
-                    <div className="p-6">
+                    <div className="p-4 sm:p-6">
                       {/* Property Name */}
-                      <h3 className="font-bold text-xl text-gray-900 mb-2 group-hover:text-green-600 transition-colors duration-300">
+                      <h3 className="font-bold text-lg sm:text-xl text-gray-900 mb-2 group-hover:text-green-600 transition-colors duration-300 line-clamp-1">
                         {property.name}
                       </h3>
                       
-                      {/* Care/Experience Type */}
-                      <p className="text-gray-500 text-sm mb-3">
-                        {property.care}
-                      </p>
+                      {/* Location */}
+                      <div className="flex items-center text-gray-500 text-sm mb-3">
+                        <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
+                        <span className="line-clamp-1">{property.location}</span>
+                      </div>
                       
                       {/* Details */}
-                      <div className="flex items-center text-gray-600 text-sm mb-4">
-                        <span>{property.nights} nights</span>
-                        <span className="mx-2">•</span>
-                        <span>{property.adults} adults</span>
-                    </div>
+                      <div className="flex items-center text-gray-600 text-sm mb-4 space-x-4">
+                        <div className="flex items-center">
+                          <Users className="w-4 h-4 mr-1" />
+                          <span>{property.max_guests} guests</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Bed className="w-4 h-4 mr-1" />
+                          <span>2 beds</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Bath className="w-4 h-4 mr-1" />
+                          <span>2 baths</span>
+                        </div>
+                      </div>
                       
-                      {/* Price and CTA */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        {property.originalPrice && (
-                            <span className="text-gray-400 line-through text-sm">${property.originalPrice}</span>
-                        )}
-                          <span className="text-2xl font-bold text-gray-900">${property.price}</span>
+                      {/* CTA Section */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xl sm:text-2xl font-bold text-gray-900">€{property.price_per_night}</span>
                           <span className="text-gray-500 text-sm">night</span>
                         </div>
                         
@@ -640,15 +646,21 @@ export default function Home() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-green-600 transition-all duration-300 group-hover:scale-110"
+                          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-green-600 hover:text-white transition-all duration-300 group-hover:scale-110 shadow-lg"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            console.log('🎯 View details clicked for:', property.id);
+                            handlePropertyClick(property.id);
+                          }}
                         >
-                          <ArrowRight className="w-4 h-4 text-gray-900" />
+                          <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-900 group-hover:text-white" />
                         </Button>
                       </div>
                     </div>
                   </div>
                 ))}
-                </div>
+              </div>
+            )}
             </div>
           </div>
         </div>

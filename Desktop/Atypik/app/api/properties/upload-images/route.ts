@@ -29,18 +29,46 @@ export async function POST(request: NextRequest) {
     const imageUrls: string[] = [];
     const errors: string[] = [];
 
-    // Check if bucket exists
+    // Check if bucket exists with more detailed logging
+    console.log('Checking for storage buckets...');
     const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
+    
     if (bucketError) {
       console.error('Error listing buckets:', bucketError);
-      return NextResponse.json({ error: 'Storage configuration error' }, { status: 500 });
+      console.error('Bucket error details:', {
+        message: bucketError.message,
+        details: bucketError.details,
+        hint: bucketError.hint
+      });
+      return NextResponse.json({ error: `Storage configuration error: ${bucketError.message}` }, { status: 500 });
     }
 
-    console.log('Available buckets:', buckets?.map(b => b.name));
+    console.log('Available buckets:', buckets?.map(b => ({ id: b.id, name: b.name, public: b.public })));
 
-    const bucketExists = buckets?.some(bucket => bucket.name === 'images');
+    // Check if images bucket exists in the list
+    let bucketExists = buckets?.some(bucket => bucket.name === 'images');
+    
+    // If bucket not found in list, try to access it directly (it might exist but not be listed due to permissions)
     if (!bucketExists) {
-      console.error('Bucket images does not exist');
+      console.log('Images bucket not found in list, trying to access it directly...');
+      try {
+        const { data: files, error: filesError } = await supabase.storage
+          .from('images')
+          .list('', { limit: 1 });
+        
+        if (!filesError) {
+          console.log('Images bucket exists and is accessible (not listed due to permissions)');
+          bucketExists = true;
+        } else {
+          console.error('Images bucket not accessible:', filesError.message);
+        }
+      } catch (error) {
+        console.error('Error testing images bucket access:', error);
+      }
+    }
+
+    if (!bucketExists) {
+      console.error('Bucket images does not exist or is not accessible');
       return NextResponse.json({ 
         error: 'Storage bucket not found. Please create the images bucket in Supabase.' 
       }, { status: 500 });

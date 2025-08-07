@@ -48,8 +48,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const isOnDashboard = pathname.includes('/dashboard');
         const isOnAuthPage = pathname.includes('/auth');
         const isOnConfirmPage = pathname.includes('/auth/confirm');
+        const isOnPropertyPage = pathname.includes('/properties/');
         
-        if (!isOnDashboard && !isOnAuthPage && !isOnConfirmPage) {
+        console.log('🔍 Redirect check:', {
+          pathname,
+          isOnDashboard,
+          isOnAuthPage,
+          isOnConfirmPage,
+          isOnPropertyPage,
+          shouldRedirect: !isOnDashboard && !isOnAuthPage && !isOnConfirmPage && !isOnPropertyPage
+        });
+        
+        if (!isOnDashboard && !isOnAuthPage && !isOnConfirmPage && !isOnPropertyPage) {
           // Redirect based on user type
           if (userType === 'owner') {
             console.log('Redirecting to owner dashboard');
@@ -58,6 +68,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.log('Redirecting to client dashboard');
             router.push('/dashboard/client');
           }
+        } else {
+          console.log('✅ No redirect needed - user can stay on current page');
         }
       } else if (auth.user && !auth.userProfile) {
         // User is authenticated but no profile - this shouldn't happen with our new system
