@@ -329,7 +329,29 @@ export function useAuth() {
         throw error;
       }
       
-      console.log('Sign out successful');
+      // Clear any stored data in localStorage/sessionStorage
+      if (typeof window !== 'undefined') {
+        // Clear Supabase auth tokens
+        localStorage.removeItem('supabase.auth.token');
+        localStorage.removeItem('sb-access-token');
+        localStorage.removeItem('sb-refresh-token');
+        
+        // Clear any other auth-related data
+        sessionStorage.clear();
+        
+        // Clear any cookies that might be set
+        document.cookie.split(";").forEach(function(c) { 
+          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+        });
+      }
+      
+      console.log('Sign out successful, redirecting to landing page...');
+      
+      // Redirect to landing page
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
+      
       return { error: null };
     } catch (error) {
       console.error('SignOut error:', error);

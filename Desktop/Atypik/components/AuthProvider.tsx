@@ -78,13 +78,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // User is not authenticated - stay on current page or redirect to home
         console.log('User not authenticated, checking redirect...');
         
-        // Don't redirect if already on auth pages, home page, or hero page
+        // Don't redirect if already on auth pages or home page
         const isOnAuthPage = pathname.includes('/auth');
         const isOnHomePage = pathname === '/';
-        const isOnHeroPage = pathname === '/hero';
         
-        if (!isOnAuthPage && !isOnHomePage && !isOnHeroPage) {
-          console.log('Redirecting to home page');
+        if (!isOnAuthPage && !isOnHomePage) {
+          console.log('Redirecting to landing page (/)');
           router.push('/');
         }
       }

@@ -101,9 +101,8 @@ export default function GlampingGuestExperience() {
         console.error('Sign out error:', result.error);
         // You could show an error message to the user here
       } else {
-        console.log('Sign out successful, redirecting to old hero section...');
-        // Redirect to the old hero section
-        router.push('/hero');
+        console.log('Sign out successful, redirecting to landing page...');
+        // The signOut function will handle the redirect automatically
       }
     } catch (error) {
       console.error('Sign out exception:', error);
