@@ -171,22 +171,22 @@ export default function GlampingGuestExperience() {
       {/* Welcome Banner */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="bg-[#2d5016] rounded-2xl p-6 sm:p-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex-1">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <div className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] rounded-2xl p-6 sm:p-8 text-white mb-8 shadow-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div className="mb-4 sm:mb-0">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-2">
                   Bonsoir, {userProfile?.full_name || 'Voyageur'} !
                 </h2>
-                <p className="text-white/90 text-lg">
+                <p className="text-green-100 text-lg">
                   Découvrez nos hébergements insolites et réservez votre prochaine aventure
                 </p>
               </div>
               <button
                 onClick={() => setSelectedCategory('all')}
-                className="flex items-center space-x-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg"
+                className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-medium transition-all hover:bg-white/30 hover:scale-105 shadow-lg"
               >
-                <Mountain className="w-5 h-5" />
-                <span>Explorer</span>
+                <Mountain className="w-5 h-5 inline mr-2" />
+                Explorer
               </button>
             </div>
           </div>
