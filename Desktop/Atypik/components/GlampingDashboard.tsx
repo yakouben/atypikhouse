@@ -31,12 +31,20 @@ import {
   Filter,
   MoreVertical,
   Trash2,
-  Menu
+  Menu,
+  ArrowRight,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  User,
+  ChevronDown
 } from 'lucide-react';
 import { useAuthContext } from './AuthProvider';
 import PropertyForm from './PropertyForm';
 import { useRouter } from 'next/navigation';
 import ReservationModal from '@/components/ReservationModal';
+import { Badge } from '@/components/ui/badge';
 
 interface Property {
   id: string;
@@ -53,11 +61,37 @@ interface Property {
   created_at: string;
 }
 
+interface Reservation {
+  id: string;
+  check_in_date: string;
+  check_out_date: string;
+  total_price: number;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  guest_count: number;
+  special_requests?: string;
+  full_name: string;
+  email_or_phone: string;
+  travel_type: string;
+  created_at: string;
+  property?: {
+    id: string;
+    name: string;
+    location: string;
+    images: string[];
+    price_per_night: number;
+  };
+  client?: {
+    id: string;
+    full_name: string;
+    email: string;
+  };
+}
+
 export default function GlampingDashboard() {
   const { userProfile, getOwnerProperties, getOwnerBookings, signOut } = useAuthContext();
   const router = useRouter();
   const [properties, setProperties] = useState<Property[]>([]);
-  const [bookings, setBookings] = useState([]);
+  const [bookings, setBookings] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [showPropertyForm, setShowPropertyForm] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
@@ -166,7 +200,7 @@ export default function GlampingDashboard() {
   const handlePropertySuccess = () => {
     setShowPropertyForm(false);
     setEditingProperty(null);
-    loadProperties();
+    loadData();
   };
 
   const handlePropertyClick = (propertyId: string) => {
@@ -189,6 +223,38 @@ export default function GlampingDashboard() {
     setShowReservationModal(false);
     setSelectedPropertyId('');
     setSelectedPropertyName('');
+  };
+
+  const handleStatusUpdate = async (reservationId: string, newStatus: string) => {
+    try {
+      console.log('🔍 Updating reservation:', { reservationId, newStatus });
+      
+      const response = await fetch('/api/bookings/owner', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingId: reservationId,
+          status: newStatus
+        }),
+      });
+
+      console.log('🔍 Response status:', response.status);
+
+      if (response.ok) {
+        console.log('✅ Reservation updated successfully');
+        // Reload data to get updated information
+        await loadData();
+      } else {
+        const result = await response.json();
+        console.error('❌ Error updating reservation:', result);
+        alert('Error updating reservation: ' + result.error);
+      }
+    } catch (error) {
+      console.error('❌ Exception updating reservation:', error);
+      alert('Error updating reservation: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    }
   };
 
   const handleSignOut = async () => {
@@ -227,6 +293,87 @@ export default function GlampingDashboard() {
     return 'Bonsoir';
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'confirmed':
+        return 'bg-blue-100 text-blue-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Clock className="w-4 h-4" />;
+      case 'confirmed':
+        return <CheckCircle className="w-4 h-4" />;
+      case 'completed':
+        return <CheckCircle className="w-4 h-4" />;
+      case 'cancelled':
+        return <XCircle className="w-4 h-4" />;
+      default:
+        return <AlertCircle className="w-4 h-4" />;
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'En attente';
+      case 'confirmed':
+        return 'Confirmée';
+      case 'completed':
+        return 'Terminée';
+      case 'cancelled':
+        return 'Annulée';
+      default:
+        return status;
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(price);
+  };
+
+  // Get reservation count for a specific property
+  const getReservationCount = (propertyId: string) => {
+    console.log(`🔍 Checking reservations for property: ${propertyId}`);
+    console.log(`🔍 Total bookings loaded: ${bookings.length}`);
+    
+    const matchingBookings = bookings.filter(booking => {
+      // Check if the booking has a property and the property ID matches
+      // The API returns property data under 'property' key
+      const propertyIdMatch = booking.property?.id === propertyId;
+      
+      if (propertyIdMatch) {
+        console.log(`🔍 Found matching booking:`, booking);
+      }
+      return propertyIdMatch;
+    });
+    
+    const count = matchingBookings.length;
+    console.log(`🔍 Reservation count for property ${propertyId}: ${count}`);
+    return count;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -236,7 +383,7 @@ export default function GlampingDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -252,42 +399,18 @@ export default function GlampingDashboard() {
                 <p className="text-gray-600 text-sm">Gérez vos propriétés</p>
               </div>
             </div>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <button 
+                onClick={handleSignOut}
+                className="flex items-center space-x-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-3 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-sm border border-red-200 text-sm"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Déconnexion</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200 px-6 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <button className="flex items-center space-x-2 text-green-600 font-medium">
-              <LayoutDashboard className="w-5 h-5" />
-              <span>Tableau de bord</span>
-            </button>
-            <button className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
-              <Home className="w-5 h-5" />
-              <span>Mes propriétés</span>
-            </button>
-            <button className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
-              <Calendar className="w-5 h-5" />
-              <span>Réservations</span>
-            </button>
-            <button className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
-              <Settings className="w-5 h-5" />
-              <span>Paramètres</span>
-            </button>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button 
-              onClick={handleSignOut}
-              className="flex items-center space-x-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-sm border border-red-200"
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Déconnexion</span>
-            </button>
-          </div>
-        </div>
-      </nav>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Bonjour Banner */}
@@ -354,14 +477,14 @@ export default function GlampingDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">Revenus</p>
-                <p className="text-2xl font-bold text-[#2C3E37]">€{properties.reduce((sum, p) => sum + p.price_per_night, 0)}</p>
+                <p className="text-2xl font-bold text-[#2C3E37]">{formatPrice(bookings.reduce((sum, b) => sum + ((b.status === 'completed' || b.status === 'confirmed') ? b.total_price : 0), 0))}</p>
               </div>
               <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
                 <Euro className="w-6 h-6 text-yellow-600" />
               </div>
             </div>
-              </div>
-            </div>
+          </div>
+        </div>
 
         {/* Properties Section */}
         <div className="mb-8">
@@ -420,35 +543,24 @@ export default function GlampingDashboard() {
                         {getCategoryLabel(property.category)}
                       </span>
                     </div>
-                    
-                    {/* Price Tag */}
-                    <div className="absolute bottom-3 right-3">
-                      <div className="bg-white/95 backdrop-blur-sm rounded-full px-3 py-2 shadow-lg border border-gray-100">
-                        <span className="text-sm font-bold text-gray-900">€{property.price_per_night}</span>
-                        <span className="text-xs text-gray-600 ml-1">/night</span>
-                      </div>
-                    </div>
                   </div>
                   <div className="p-4 sm:p-5 lg:p-4 xl:p-5">
-                    <h3 className="font-semibold text-[#2C3E37] mb-2 text-base sm:text-lg group-hover:text-green-600 transition-colors duration-300 line-clamp-1">{property.name}</h3>
-                        <div className="flex items-center text-gray-600 mb-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-semibold text-[#2C3E37] text-base sm:text-lg group-hover:text-green-600 transition-colors duration-300 line-clamp-1">{property.name}</h3>
+                      <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
+                        €{property.price_per_night}
+                      </div>
+                    </div>
+                    <div className="flex items-center text-gray-600 mb-3">
                       <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
                       <span className="text-sm line-clamp-1">{property.location}</span>
-                        </div>
+                    </div>
                         
                         {/* Amenities */}
                     <div className="flex items-center space-x-4 mb-4">
                           <div className="flex items-center text-gray-600">
                             <Bed className="w-4 h-4 mr-1" />
                         <span className="text-sm">{property.max_guests} guests</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="text-lg font-bold text-[#2C3E37]">€{property.price_per_night}</div>
-                          <div className="flex items-center space-x-1">
-                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="text-sm text-gray-600">{property.rating || 4.9}</span>
                           </div>
                         </div>
                         
@@ -466,22 +578,15 @@ export default function GlampingDashboard() {
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
-                          handlePropertyClick(property.id);
-                        }}
-                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-1 hover:scale-105"
-                      >
-                            <Eye className="w-4 h-4" />
-                        <span>View</span>
-                          </button>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
                           handleReservationClick(e, property.id, property.name);
                         }}
-                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-1 hover:scale-105"
+                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-1 hover:scale-105 relative"
                       >
                             <Calendar className="w-4 h-4" />
                         <span>Reserve</span>
+                        <span className="ml-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full font-medium min-w-[20px] text-center">
+                          {getReservationCount(property.id)}
+                        </span>
                           </button>
                       <button 
                         onClick={(e) => {

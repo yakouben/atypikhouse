@@ -36,9 +36,7 @@ export async function POST(request: NextRequest) {
     if (bucketError) {
       console.error('Error listing buckets:', bucketError);
       console.error('Bucket error details:', {
-        message: bucketError.message,
-        details: bucketError.details,
-        hint: bucketError.hint
+        message: bucketError.message
       });
       return NextResponse.json({ error: `Storage configuration error: ${bucketError.message}` }, { status: 500 });
     }
@@ -77,7 +75,8 @@ export async function POST(request: NextRequest) {
     console.log('Bucket exists, processing files...');
 
     // Process each uploaded file
-    for (const [key, value] of formData.entries()) {
+    const entries = Array.from(formData.entries());
+    for (const [key, value] of entries) {
       if (value instanceof File) {
         const file = value;
         

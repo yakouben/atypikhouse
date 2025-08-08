@@ -1,14 +1,44 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/components/AuthProvider';
+import PerformanceMonitor from '@/components/PerformanceMonitor';
+import PerformanceOptimizer from '@/components/PerformanceOptimizer';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: '#4A7C59',
+};
 
 export const metadata: Metadata = {
-  title: 'AtypikHouse - Hébergements insolites et éco-responsables',
+  title: {
+    default: 'AtypikHouse - Hébergements insolites et éco-responsables',
+    template: '%s | AtypikHouse'
+  },
   description: 'Découvrez des hébergements uniques en France et en Europe : cabanes dans les arbres, yourtes traditionnelles et cabanes flottantes. Réservez votre séjour insolite avec AtypikHouse.',
-  keywords: 'hébergements insolites, cabanes dans les arbres, yourtes, cabanes flottantes, glamping, éco-responsable, France, Europe, AtypikHouse',
+  keywords: [
+    'hébergements insolites',
+    'cabanes dans les arbres', 
+    'yourtes',
+    'cabanes flottantes',
+    'glamping',
+    'éco-responsable',
+    'France',
+    'Europe',
+    'AtypikHouse',
+    'hébergement écologique',
+    'vacances nature',
+    'séjour insolite'
+  ],
   authors: [{ name: 'AtypikHouse' }],
   creator: 'AtypikHouse',
   publisher: 'AtypikHouse',
@@ -42,6 +72,7 @@ export const metadata: Metadata = {
     title: 'AtypikHouse - Hébergements insolites et éco-responsables',
     description: 'Découvrez des hébergements uniques en France et en Europe.',
     images: ['/hero.jpg'],
+    creator: '@atypikhouse',
   },
   robots: {
     index: true,
@@ -57,73 +88,84 @@ export const metadata: Metadata = {
   verification: {
     google: 'your-google-verification-code',
   },
-}
+  category: 'Travel',
+  classification: 'Travel Agency',
+};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "name": "AtypikHouse",
+    "description": "Hebergements insolites et ecoresponsables en France et en Europe",
+    "url": "https://atypikhouse.com",
+    "logo": "https://atypikhouse.com/logo.png",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Pierrefonds",
+      "addressRegion": "Oise",
+      "addressCountry": "FR"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "availableLanguage": "French"
+    },
+    "sameAs": [
+      "https://facebook.com/atypikhouse",
+      "https://instagram.com/atypikhouse"
+    ],
+    "areaServed": [
+      {
+        "@type": "Country",
+        "name": "France"
+      },
+      {
+        "@type": "Country", 
+        "name": "Europe"
+      }
+    ],
+    "serviceType": "Hebergements insolites et eco-responsables",
+    "priceRange": "€€",
+    "currenciesAccepted": "EUR",
+    "paymentAccepted": "Credit Card, PayPal, Bank Transfer"
+  };
+
   return (
-    <html lang="fr">
+    <html lang="fr" className={inter.variable}>
       <head>
-        {/* Preload critical resources */}
-        <link rel="preload" href="/hero.jpg" as="image" />
-        <link rel="preload" href="/hero2.png" as="image" />
-        
         {/* DNS prefetch for external domains */}
         <link rel="dns-prefetch" href="//images.pexels.com" />
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        
         {/* Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "TravelAgency",
-              "name": "AtypikHouse",
-              "description": "Hébergements insolites et éco-responsables en France et en Europe",
-              "url": "https://atypikhouse.com",
-              "logo": "https://atypikhouse.com/logo.png",
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Pierrefonds",
-                "addressRegion": "Oise",
-                "addressCountry": "FR"
-              },
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "contactType": "customer service",
-                "availableLanguage": "French"
-              },
-              "sameAs": [
-                "https://facebook.com/atypikhouse",
-                "https://instagram.com/atypikhouse"
-              ],
-              "areaServed": [
-                {
-                  "@type": "Country",
-                  "name": "France"
-                },
-                {
-                  "@type": "Country", 
-                  "name": "Europe"
-                }
-              ],
-              "serviceType": "Hébergements insolites et éco-responsables"
-            })
+            __html: JSON.stringify(structuredData)
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} antialiased`}>
+        <PerformanceOptimizer>
         <AuthProvider>
           {children}
         </AuthProvider>
+          <PerformanceMonitor />
+        </PerformanceOptimizer>
       </body>
     </html>
   );

@@ -16,8 +16,6 @@ import {
   Castle,
   Caravan,
   ArrowRight,
-  Grid3X3,
-  List,
   TreePine,
   User,
   LogOut,
@@ -25,7 +23,6 @@ import {
 } from 'lucide-react';
 import { useAuthContext } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
-import ReservationModal from '@/components/ReservationModal';
 
 interface Property {
   id: string;
@@ -63,12 +60,8 @@ export default function GlampingGuestExperience() {
   const router = useRouter();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('discover');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
     loadProperties();
@@ -136,16 +129,6 @@ export default function GlampingGuestExperience() {
     window.location.href = `/properties/${propertyId}`;
   };
 
-  const handleReserveClick = (property: Property) => {
-    setSelectedProperty(property);
-    setIsReservationModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsReservationModalOpen(false);
-    setSelectedProperty(null);
-  };
-
   const filteredProperties = properties.filter(property => {
     const matchesSearch = property.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          property.location.toLowerCase().includes(searchQuery.toLowerCase());
@@ -171,6 +154,8 @@ export default function GlampingGuestExperience() {
           <div className="flex items-center justify-between h-14 sm:h-16">
             <div className="flex items-center space-x-4">
               <h1 className="text-lg sm:text-xl font-bold text-gray-900">Découvrir</h1>
+            </div>
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <button 
                 onClick={handleSignOut}
                 className="flex items-center space-x-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-3 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-sm border border-red-200 text-sm"
@@ -178,26 +163,6 @@ export default function GlampingGuestExperience() {
                 <LogOut className="w-4 h-4" />
                 <span>Déconnexion</span>
               </button>
-            </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg transition-colors ${
-                    viewMode === 'grid' ? 'bg-gray-200' : 'hover:bg-gray-100'
-                  }`}
-                >
-                  <Grid3X3 className="w-4 h-4 text-gray-600" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg transition-colors ${
-                    viewMode === 'list' ? 'bg-gray-200' : 'hover:bg-gray-100'
-                  }`}
-                >
-                  <List className="w-4 h-4 text-gray-600" />
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -262,11 +227,7 @@ export default function GlampingGuestExperience() {
             </p>
           </div>
         ) : (
-          <div className={`grid gap-4 sm:gap-6 ${
-            viewMode === 'list' 
-              ? 'grid-cols-1' 
-              : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-          }`}>
+          <div className={`grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`}>
             {filteredProperties.map((property) => (
               <div 
                 key={property.id} 
@@ -330,7 +291,7 @@ export default function GlampingGuestExperience() {
                     className="w-full bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] text-white px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg flex items-center justify-center space-x-2 text-sm sm:text-base group-hover:scale-105"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleReserveClick(property);
+                      handlePropertyClick(property.id);
                     }}
                   >
                     <Euro className="w-4 h-4 mr-1" />
@@ -343,15 +304,6 @@ export default function GlampingGuestExperience() {
           </div>
         )}
       </div>
-
-      {selectedProperty && (
-        <ReservationModal
-          isOpen={isReservationModalOpen}
-          onClose={handleCloseModal}
-          propertyId={selectedProperty.id}
-          propertyName={selectedProperty.name}
-        />
-      )}
     </div>
   );
 } 

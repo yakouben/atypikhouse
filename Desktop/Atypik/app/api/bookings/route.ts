@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     console.log('✅ User authenticated:', user.id);
 
     // Step 2: Parse request body
-    let bookingData;
+    let bookingData: any;
     try {
       bookingData = await request.json();
       console.log('📝 Received booking data:', bookingData);

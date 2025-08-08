@@ -14,7 +14,9 @@ import {
   CheckCircle,
   AlertCircle,
   XCircle,
-  Loader2
+  Loader2,
+  Filter,
+  ChevronDown
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -53,8 +55,10 @@ interface ReservationModalProps {
 
 export default function ReservationModal({ isOpen, onClose, propertyId, propertyName }: ReservationModalProps) {
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [filteredReservations, setFilteredReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
   useEffect(() => {
     console.log('🔍 ReservationModal useEffect:', { isOpen, propertyId });
@@ -63,6 +67,10 @@ export default function ReservationModal({ isOpen, onClose, propertyId, property
       loadReservations();
     }
   }, [isOpen, propertyId]);
+
+  useEffect(() => {
+    filterReservations();
+  }, [reservations, selectedStatus]);
 
   const loadReservations = async () => {
     try {
@@ -89,6 +97,14 @@ export default function ReservationModal({ isOpen, onClose, propertyId, property
       setReservations([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const filterReservations = () => {
+    if (selectedStatus === 'all') {
+      setFilteredReservations(reservations);
+    } else {
+      setFilteredReservations(reservations.filter(reservation => reservation.status === selectedStatus));
     }
   };
 
@@ -119,6 +135,21 @@ export default function ReservationModal({ isOpen, onClose, propertyId, property
         return <CheckCircle className="w-4 h-4" />;
       default:
         return <AlertCircle className="w-4 h-4" />;
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'En attente';
+      case 'confirmed':
+        return 'Confirmée';
+      case 'completed':
+        return 'Terminée';
+      case 'cancelled':
+        return 'Annulée';
+      default:
+        return status;
     }
   };
 
@@ -168,8 +199,35 @@ export default function ReservationModal({ isOpen, onClose, propertyId, property
           </button>
         </div>
 
+        {/* Filter Section */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <Filter className="w-5 h-5 text-gray-400" />
+              <span className="text-sm font-medium text-gray-700">Filtrer par statut:</span>
+            </div>
+            <div className="relative">
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              >
+                <option value="all">Tous les statuts</option>
+                <option value="pending">En attente</option>
+                <option value="confirmed">Confirmées</option>
+                <option value="cancelled">Annulées</option>
+                <option value="completed">Terminées</option>
+              </select>
+              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            </div>
+            <div className="text-sm text-gray-600">
+              {filteredReservations.length} réservation{filteredReservations.length > 1 ? 's' : ''} trouvée{filteredReservations.length > 1 ? 's' : ''}
+            </div>
+          </div>
+        </div>
+
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-[#2d5016]" />
@@ -180,19 +238,22 @@ export default function ReservationModal({ isOpen, onClose, propertyId, property
               <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
               <p className="text-red-600">{error}</p>
             </div>
-          ) : reservations.length === 0 ? (
+          ) : filteredReservations.length === 0 ? (
             <div className="text-center py-12">
               <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Aucune réservation
+                {selectedStatus !== 'all' ? 'Aucune réservation trouvée' : 'Aucune réservation'}
               </h3>
               <p className="text-gray-600">
-                Aucune réservation n'a été trouvée pour cette propriété.
+                {selectedStatus !== 'all' 
+                  ? `Aucune réservation avec le statut "${getStatusText(selectedStatus)}" n'a été trouvée.`
+                  : 'Aucune réservation n\'a été trouvée pour cette propriété.'
+                }
               </p>
             </div>
           ) : (
             <div className="space-y-6">
-              {reservations.map((reservation) => (
+              {filteredReservations.map((reservation) => (
                 <div
                   key={reservation.id}
                   className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
@@ -215,7 +276,7 @@ export default function ReservationModal({ isOpen, onClose, propertyId, property
                     <Badge className={getStatusColor(reservation.status)}>
                       <div className="flex items-center space-x-1">
                         {getStatusIcon(reservation.status)}
-                        <span className="capitalize">{reservation.status}</span>
+                        <span>{getStatusText(reservation.status)}</span>
                       </div>
                     </Badge>
                   </div>

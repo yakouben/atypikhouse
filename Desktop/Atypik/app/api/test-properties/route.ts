@@ -22,12 +22,17 @@ export async function GET(request: NextRequest) {
     }
 
     // Test 2: Check table structure
-    const { data: columns, error: columnsError } = await supabaseAdmin
-      .rpc('get_table_columns', { table_name: 'properties' })
-      .catch(() => {
-        // If RPC doesn't exist, try a different approach
-        return { data: null, error: { message: 'RPC not available' } };
-      });
+    let columns = null;
+    let columnsError = null;
+    
+    try {
+      const result = await supabaseAdmin
+        .rpc('get_table_columns', { table_name: 'properties' });
+      columns = result.data;
+      columnsError = result.error;
+    } catch (error) {
+      columnsError = { message: 'RPC not available' };
+    }
 
     if (columnsError && columnsError.message !== 'RPC not available') {
       return NextResponse.json({ 

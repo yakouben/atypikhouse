@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     console.log('✅ User authenticated:', user.id);
 
     // Step 2: Parse request body
-    let propertyData;
+    let propertyData: any;
     try {
       propertyData = await request.json();
       console.log('📝 Received property data:', propertyData);

@@ -11,12 +11,12 @@ import {
   MapPin,
   Users,
   Euro,
-  Calendar
+  Calendar,
+  User
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthContext } from '@/components/AuthProvider';
 import HeroSection from '@/components/HeroSection';
-import ReservationModal from '@/components/ReservationModal';
 
 // Only the 4 database categories
 const accommodationCategories = [
@@ -87,9 +87,6 @@ export default function Home() {
   const [propertiesLoading, setPropertiesLoading] = useState(true);
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [showReservationModal, setShowReservationModal] = useState(false);
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
-  const [selectedPropertyName, setSelectedPropertyName] = useState<string>('');
   const router = useRouter();
 
   useEffect(() => {
@@ -122,22 +119,6 @@ export default function Home() {
 
   const handlePropertyClick = (propertyId: string) => {
     router.push(`/properties/${propertyId}`);
-  };
-
-  const handleReservationClick = (e: React.MouseEvent, propertyId: string, propertyName: string) => {
-    e.stopPropagation();
-    console.log('🔍 Reservation button clicked:', { propertyId, propertyName });
-    setSelectedPropertyId(propertyId);
-    setSelectedPropertyName(propertyName);
-    setShowReservationModal(true);
-    console.log('🔍 Modal state updated:', { showReservationModal: true, selectedPropertyId: propertyId });
-  };
-
-  const handleCloseReservationModal = () => {
-    console.log('🔍 Closing reservation modal');
-    setShowReservationModal(false);
-    setSelectedPropertyId('');
-    setSelectedPropertyName('');
   };
 
   const getCategoryIcon = (category: string) => {
@@ -195,6 +176,129 @@ export default function Home() {
           onConnexionClick={handleConnexionClick}
           onInscriptionClick={handleInscriptionClick}
         />
+
+      {/* Welcome Banner for Client */}
+      {user && userProfile ? (
+        <section className="py-8 sm:py-12 bg-gradient-to-br from-[#2d5016] via-[#1a3a0f] to-[#2d5016] relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center">
+              {/* Welcome Icon */}
+              <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-sm rounded-full mb-6">
+                <Mountain className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+              </div>
+              
+              {/* Welcome Message */}
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+                Bienvenue, {userProfile.full_name || 'Voyageur'} ! 👋
+              </h1>
+              
+              <p className="text-lg sm:text-xl text-white/90 mb-6 max-w-2xl mx-auto">
+                Découvrez nos hébergements insolites et réservez votre prochaine aventure en pleine nature
+              </p>
+              
+              {/* Quick Stats */}
+              <div className="flex flex-wrap justify-center gap-6 sm:gap-8 mb-8">
+                <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                  <Mountain className="w-4 h-4 text-white" />
+                  <span className="text-white font-medium">{properties.length} hébergements disponibles</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                  <TreePine className="w-4 h-4 text-white" />
+                  <span className="text-white font-medium">4 catégories d'hébergements</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                  <MapPin className="w-4 h-4 text-white" />
+                  <span className="text-white font-medium">Destinations uniques</span>
+                </div>
+              </div>
+              
+              {/* Call to Action */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => setSelectedCategory('all')}
+                  className="inline-flex items-center space-x-2 bg-white text-[#2d5016] px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-lg"
+                >
+                  <Mountain className="w-5 h-5" />
+                  <span>Explorer tous les hébergements</span>
+                </button>
+                <button
+                  onClick={handleReserverClick}
+                  className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white border border-white/30 px-6 py-3 rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 hover:scale-105"
+                >
+                  <Calendar className="w-5 h-5" />
+                  <span>Voir mes réservations</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="py-8 sm:py-12 bg-gradient-to-br from-[#2d5016] via-[#1a3a0f] to-[#2d5016] relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center">
+              {/* Welcome Icon */}
+              <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-sm rounded-full mb-6">
+                <Mountain className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+              </div>
+              
+              {/* Welcome Message */}
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+                Bienvenue chez AtypikHouse ! 🏡
+              </h1>
+              
+              <p className="text-lg sm:text-xl text-white/90 mb-6 max-w-2xl mx-auto">
+                Découvrez nos hébergements insolites et réservez votre prochaine aventure en pleine nature
+              </p>
+              
+              {/* Quick Stats */}
+              <div className="flex flex-wrap justify-center gap-6 sm:gap-8 mb-8">
+                <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                  <Mountain className="w-4 h-4 text-white" />
+                  <span className="text-white font-medium">{properties.length} hébergements disponibles</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                  <TreePine className="w-4 h-4 text-white" />
+                  <span className="text-white font-medium">4 catégories d'hébergements</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                  <MapPin className="w-4 h-4 text-white" />
+                  <span className="text-white font-medium">Destinations uniques</span>
+                </div>
+              </div>
+              
+              {/* Call to Action */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => setSelectedCategory('all')}
+                  className="inline-flex items-center space-x-2 bg-white text-[#2d5016] px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-lg"
+                >
+                  <Mountain className="w-5 h-5" />
+                  <span>Explorer tous les hébergements</span>
+                </button>
+                <button
+                  onClick={handleConnexionClick}
+                  className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white border border-white/30 px-6 py-3 rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 hover:scale-105"
+                >
+                  <User className="w-5 h-5" />
+                  <span>Se connecter</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Category Filter Section */}
       <section className="py-8 sm:py-12 bg-gray-50">
@@ -370,12 +474,12 @@ export default function Home() {
                             <span>{property.price_per_night}</span>
                           </div>
                           <button
-                            onClick={(e) => {
+                          onClick={(e) => {
                               e.preventDefault();
-                              e.stopPropagation();
-                              console.log('🔍 Button clicked directly:', property.id, property.name);
-                              handleReservationClick(e, property.id, property.name);
-                            }}
+                            e.stopPropagation();
+                              console.log('🔍 Reservation button clicked, navigating to property:', property.id);
+                            handlePropertyClick(property.id);
+                          }}
                             className="flex items-center space-x-1 bg-[#2d5016] text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-[#1a3a0f] transition-colors"
                           >
                             <Calendar className="w-3 h-3" />
@@ -393,12 +497,7 @@ export default function Home() {
       </section>
       
       {/* Reservation Modal */}
-      <ReservationModal
-        isOpen={showReservationModal}
-        onClose={handleCloseReservationModal}
-        propertyId={selectedPropertyId}
-        propertyName={selectedPropertyName}
-      />
-    </div>
+      {/* Removed as per edit hint */}
+      </div>
   );
 }

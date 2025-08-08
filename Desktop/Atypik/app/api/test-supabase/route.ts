@@ -36,7 +36,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         error: 'Failed to list storage buckets',
         details: bucketError.message,
-        hint: bucketError.hint,
         environment: envVars,
         connection: 'Working'
       }, { status: 500 });

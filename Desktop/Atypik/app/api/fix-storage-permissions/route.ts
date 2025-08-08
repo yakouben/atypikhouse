@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         error: 'Cannot list buckets',
         details: bucketError.message,
-        hint: bucketError.hint,
         solution: 'This might be due to RLS policies or permissions'
       }, { status: 500 });
     }
@@ -32,7 +31,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         error: 'Cannot access images bucket',
         details: filesError.message,
-        hint: filesError.hint,
         solution: 'Check RLS policies for the images bucket',
         bucketsFound: buckets?.length || 0,
         availableBuckets: buckets?.map(b => b.name) || []
@@ -56,7 +54,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         error: 'Cannot upload to images bucket',
         details: uploadError.message,
-        hint: uploadError.hint,
         solution: 'Check INSERT policy for the images bucket',
         bucketAccessible: true,
         filesCount: files?.length || 0

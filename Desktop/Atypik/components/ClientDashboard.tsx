@@ -165,51 +165,51 @@ export default function ClientDashboard() {
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-200 px-6 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`flex items-center space-x-2 transition-colors ${
-                activeTab === 'dashboard' 
-                  ? 'text-green-600 font-medium' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <LayoutDashboard className="w-5 h-5" />
-              <span>Tableau de bord</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('properties')}
-              className={`flex items-center space-x-2 transition-colors ${
-                activeTab === 'properties' 
-                  ? 'text-green-600 font-medium' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <Home className="w-5 h-5" />
-              <span>Parcourir</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('bookings')}
-              className={`flex items-center space-x-2 transition-colors ${
-                activeTab === 'bookings' 
-                  ? 'text-green-600 font-medium' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <Calendar className="w-5 h-5" />
-              <span>Mes réservations</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('profile')}
-              className={`flex items-center space-x-2 transition-colors ${
-                activeTab === 'profile' 
-                  ? 'text-green-600 font-medium' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <User className="w-5 h-5" />
-              <span>Profil</span>
-            </button>
+        <div className="flex items-center space-x-8">
+          <button
+            onClick={() => setActiveTab('dashboard')}
+            className={`flex items-center space-x-2 transition-colors ${
+              activeTab === 'dashboard' 
+                ? 'text-green-600 font-medium' 
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <LayoutDashboard className="w-5 h-5" />
+            <span>Tableau de bord</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('properties')}
+            className={`flex items-center space-x-2 transition-colors ${
+              activeTab === 'properties' 
+                ? 'text-green-600 font-medium' 
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Home className="w-5 h-5" />
+            <span>Parcourir</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('bookings')}
+            className={`flex items-center space-x-2 transition-colors ${
+              activeTab === 'bookings' 
+                ? 'text-green-600 font-medium' 
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Calendar className="w-5 h-5" />
+            <span>Mes réservations</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`flex items-center space-x-2 transition-colors ${
+              activeTab === 'profile' 
+                ? 'text-green-600 font-medium' 
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <User className="w-5 h-5" />
+            <span>Profil</span>
+          </button>
           </div>
           <div className="flex items-center space-x-4">
             <button 

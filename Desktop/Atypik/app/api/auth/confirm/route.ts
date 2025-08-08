@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
+import { cookies } from 'next/headers';
 
 export async function POST(request: NextRequest) {
   try {
     const { token, type } = await request.json();
 
     // Create server-side Supabase client
-    const supabase = createServerClient();
+    const cookieStore = cookies();
+    const supabase = createServerClient(cookieStore);
 
     console.log('Email confirmation request:', { token: token ? 'present' : 'missing', type });
 
@@ -48,38 +50,6 @@ export async function POST(request: NextRequest) {
       error = e;
     }
 
-    // If the first method failed, try alternative approach
-    if (!user && !isAlreadyConfirmed) {
-      try {
-        // Method 2: Try with verifyOtp using the token directly
-        console.log('Trying verifyOtp with signup type...');
-        const { data, error: verifyError } = await supabase.auth.verifyOtp({
-          token: token,
-          type: 'signup'
-        });
-        
-        if (!verifyError && data?.user) {
-          user = data.user;
-          console.log('User verified successfully with verifyOtp:', user.id);
-        } else {
-          error = verifyError;
-          console.log('verifyOtp failed:', verifyError);
-          
-          // Check if the error is because the email is already confirmed
-          if (verifyError?.message?.includes('already confirmed') || 
-              verifyError?.message?.includes('already verified') ||
-              verifyError?.message?.includes('invalid') ||
-              verifyError?.message?.includes('expired')) {
-            isAlreadyConfirmed = true;
-            console.log('Email appears to be already confirmed, checking user status...');
-          }
-        }
-      } catch (e) {
-        console.log('verifyOtp threw exception:', e);
-        error = e;
-      }
-    }
-
     // If email is already confirmed or we have an error, try to get the user from the current session
     if (isAlreadyConfirmed || (!user && error)) {
       console.log('Attempting to get user from current session...');
@@ -95,20 +65,22 @@ export async function POST(request: NextRequest) {
         console.log('Attempting to decode token to get user info...');
         
         // For now, we'll return a success response if the error suggests the email is already confirmed
+        const errorMessage = error && typeof error === 'object' && 'message' in error 
+          ? (error as { message: string }).message 
+          : '';
+        
         if (isAlreadyConfirmed || 
-            error?.message?.includes('already') || 
-            error?.message?.includes('invalid') ||
-            error?.message?.includes('expired')) {
-          console.log('Email appears to be already confirmed, returning success...');
-          
-          // Try to get user info from the token or return a generic success
-          // Since we can't decode the token easily, we'll return a success with default values
-          return NextResponse.json({
+            errorMessage.includes('already') || 
+            errorMessage.includes('invalid') ||
+            errorMessage.includes('expired')) {
+          return NextResponse.json(
+            { 
             success: true,
-            user_type: 'client', // Default user type
-            redirect_to: '/dashboard/client',
-            message: 'Email déjà confirmé avec succès'
-          });
+              message: 'Email déjà confirmé ou lien expiré',
+              isAlreadyConfirmed: true 
+            },
+            { status: 200 }
+          );
         }
       }
     }
@@ -117,6 +89,14 @@ export async function POST(request: NextRequest) {
       console.error('All email confirmation methods failed:', error);
       return NextResponse.json(
         { error: 'Erreur lors de la confirmation de l\'email. Veuillez vérifier le lien dans votre email.' },
+        { status: 400 }
+      );
+    }
+
+    // Ensure user is not null before proceeding
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Utilisateur non trouvé' },
         { status: 400 }
       );
     }

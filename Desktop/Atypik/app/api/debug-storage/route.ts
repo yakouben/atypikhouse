@@ -43,8 +43,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         error: 'Failed to list storage buckets',
         details: bucketError.message,
-        hint: bucketError.hint,
-        code: bucketError.code,
         supabaseUrl: supabaseUrl.substring(0, 20) + '...',
         supabaseKey: supabaseKey.substring(0, 10) + '...',
         connection: 'Working',
@@ -64,8 +62,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ 
           error: 'Images bucket exists but not accessible',
           details: filesError.message,
-          hint: filesError.hint,
-          code: filesError.code,
           supabaseUrl: supabaseUrl.substring(0, 20) + '...',
           supabaseKey: supabaseKey.substring(0, 10) + '...',
           connection: 'Working',
@@ -114,8 +110,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         error: 'Failed to access images bucket',
         details: filesError.message,
-        hint: filesError.hint,
-        code: filesError.code,
         bucketExists: true,
         bucketInfo: {
           id: imagesBucket.id,

@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { cookies } from 'next/headers';
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password, full_name, user_type, address, what_you_own, reservation_type } = await request.json();
 
     // Create server-side Supabase client
-    const supabase = createServerClient();
+    const cookieStore = cookies();
+    const supabase = createServerClient(cookieStore);
 
     // Construct the redirect URL for email confirmation
     const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
