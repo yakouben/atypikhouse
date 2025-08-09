@@ -36,12 +36,16 @@ interface Booking {
   status: string;
   guest_count: number;
   properties: {
+    id: string;
     name: string;
     location: string;
   };
   profiles: {
     full_name: string;
     email: string;
+  };
+  property: {
+    id: string;
   };
 }
 
@@ -51,12 +55,21 @@ export default function OwnerDashboard() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [showReservations, setShowReservations] = useState(false);
+  const [refreshingBookings, setRefreshingBookings] = useState(false);
 
   useEffect(() => {
     if (userProfile?.id) {
       loadDashboardData();
     }
   }, [userProfile]);
+
+  // Refresh booking data when switching to bookings tab
+  useEffect(() => {
+    if (activeTab === 'bookings' && userProfile?.id) {
+      refreshBookingData();
+    }
+  }, [activeTab, userProfile]);
 
   const loadDashboardData = async () => {
     setLoading(true);
@@ -73,6 +86,47 @@ export default function OwnerDashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Refresh booking data
+  const refreshBookingData = async () => {
+    try {
+      setRefreshingBookings(true);
+      const bookingsData = await getOwnerBookings(userProfile!.id);
+      if (bookingsData.data) setBookings(bookingsData.data);
+    } catch (error) {
+      console.error('Error refreshing booking data:', error);
+    } finally {
+      setRefreshingBookings(false);
+    }
+  };
+
+  // Calculate total revenue from confirmed and completed bookings
+  const calculateTotalRevenue = () => {
+    return bookings
+      .filter(booking => booking.status === 'confirmed' || booking.status === 'completed')
+      .reduce((sum, booking) => sum + booking.total_price, 0);
+  };
+
+  // Get booking count by status
+  const getBookingCountByStatus = (status: string) => {
+    return bookings.filter(booking => booking.status === status).length;
+  };
+
+  // Get reservation count for a specific property
+  const getPropertyBookingCount = (propertyId: string) => {
+    console.log('Checking property ID:', propertyId);
+    console.log('All bookings:', bookings);
+    
+    const count = bookings.filter(booking => {
+      // Try both possible property ID fields
+      const bookingPropertyId = booking.property?.id || booking.properties?.id;
+      console.log('Booking property ID:', bookingPropertyId, 'Matches:', bookingPropertyId === propertyId);
+      return bookingPropertyId === propertyId;
+    }).length;
+    
+    console.log('Final count for property', propertyId, ':', count);
+    return count;
   };
 
   const handleSignOut = async () => {
@@ -182,7 +236,7 @@ export default function OwnerDashboard() {
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
@@ -195,24 +249,57 @@ export default function OwnerDashboard() {
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Réservations</p>
-                    <p className="text-2xl font-bold text-gray-900">{bookings.length}</p>
+                    <p className="text-sm font-medium text-gray-600">Total Réservations</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {refreshingBookings ? (
+                        <span className="inline-flex items-center">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-2"></div>
+                          Chargement...
+                        </span>
+                      ) : (
+                        <>
+                          {bookings.length}
+                          <span className="text-sm text-gray-500 ml-2">(Debug: {bookings.length} bookings loaded)</span>
+                        </>
+                      )}
+                    </p>
                   </div>
-                  <Calendar className="w-8 h-8 text-green-600" />
+                  <Calendar className="w-8 h-8 text-blue-600" />
+                </div>
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">En Attente</p>
+                    <p className="text-2xl font-bold text-yellow-600">{getBookingCountByStatus('pending')}</p>
+                  </div>
+                  <Calendar className="w-8 h-8 text-yellow-600" />
                 </div>
               </div>
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">Revenus</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      €{bookings.reduce((sum, booking) => sum + booking.total_price, 0).toLocaleString()}
+                    <p className="text-2xl font-bold text-green-600">
+                      €{calculateTotalRevenue().toLocaleString()}
                     </p>
                   </div>
                   <Euro className="w-8 h-8 text-green-600" />
                 </div>
               </div>
             </div>
+
+            {/* Debug Section - Remove after fixing */}
+            {bookings.length > 0 && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
+                <h3 className="font-semibold text-yellow-800 mb-2">Debug Info (Remove after fixing)</h3>
+                <div className="text-sm text-yellow-700">
+                  <p>Total bookings: {bookings.length}</p>
+                  <p>Property IDs: {properties.map(p => p.id).join(', ')}</p>
+                  <p>Booking property IDs: {bookings.map(b => b.property?.id || b.properties?.id || 'undefined').join(', ')}</p>
+                </div>
+              </div>
+            )}
 
             {/* Add Property Button */}
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -269,15 +356,135 @@ export default function OwnerDashboard() {
 
         {activeTab === 'properties' && (
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Mes propriétés</h2>
-            {/* Properties management content */}
-            <p className="text-gray-600">Gestion des propriétés à venir...</p>
+            {!showReservations ? (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900">Mes propriétés</h2>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowReservations(true)}
+                      className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25 flex items-center gap-2"
+                    >
+                      <Calendar className="w-4 h-4" />
+                      Voir les réservations
+                    </button>
+                    <button className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25 flex items-center gap-2">
+                      <Plus className="w-4 h-4" />
+                      Ajouter
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Properties Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {properties.length === 0 ? (
+                    <div className="col-span-full text-center py-12">
+                      <Home className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-xl font-medium text-gray-900 mb-2">
+                        Aucune propriété trouvée
+                      </h3>
+                      <p className="text-gray-500 mb-6">
+                        Commencez par ajouter votre première propriété pour la louer.
+                      </p>
+                      <button className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25 flex items-center gap-2 mx-auto">
+                        <Plus className="w-5 h-5" />
+                        Ajouter ma première propriété
+                      </button>
+                    </div>
+                  ) : (
+                    properties.map((property) => (
+                      <div key={property.id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300">
+                        {/* Property Image */}
+                        <div className="relative h-48">
+                          {property.images && property.images.length > 0 ? (
+                            <img
+                              src={property.images[0]}
+                              alt={property.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                              <Home className="w-12 h-12 text-gray-400" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                          
+                          {/* Category Badge */}
+                          <div className="absolute bottom-4 left-4">
+                            <span className="bg-[#4A7C59]/90 text-white px-3 py-1 rounded-full text-sm font-medium">
+                              {property.type}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Property Info */}
+                        <div className="p-6">
+                          <div className="flex items-start justify-between mb-3">
+                            <h3 className="text-lg font-bold text-gray-900 truncate">
+                              {property.name}
+                            </h3>
+                            <span className="bg-[#4A7C59] text-white px-2 py-1 rounded-lg text-sm font-semibold">
+                              €{property.price_per_night}
+                            </span>
+                          </div>
+                          
+                          <div className="space-y-2 text-sm text-gray-600">
+                            <div className="flex items-center gap-2">
+                              <LocationIcon className="w-4 h-4" />
+                              <span>{property.location}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <User className="w-4 h-4" />
+                              <span>{property.max_guests} invités</span>
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
+                            <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1">
+                              <Settings className="w-4 h-4" />
+                              Modifier
+                            </button>
+                            <button className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              Réservations {getPropertyBookingCount(property.id)}
+                              <span className="text-xs text-gray-500 ml-1">
+                                (Prop: {property.id}, Bookings: {bookings.filter(b => b.property?.id === property.id || b.properties?.id === property.id).length})
+                              </span>
+                            </button>
+                            <button className="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                              <Settings className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setShowReservations(false)}
+                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Retour aux propriétés
+                    </button>
+                    <h2 className="text-xl font-semibold text-gray-900">Réservations de mes propriétés</h2>
+                  </div>
+                </div>
+                <OwnerBookingsDashboard onBookingUpdate={refreshBookingData} />
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'bookings' && (
           <div>
-              <OwnerBookingsDashboard />
+              <OwnerBookingsDashboard onBookingUpdate={refreshBookingData} />
           </div>
         )}
 

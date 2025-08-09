@@ -81,10 +81,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Don't redirect if already on auth pages or home page
         const isOnAuthPage = pathname.includes('/auth');
         const isOnHomePage = pathname === '/';
+        const isOnBlogPage = pathname === '/blog';
         
-        if (!isOnAuthPage && !isOnHomePage) {
+        console.log('🔍 Unauthenticated user redirect check:', {
+          pathname,
+          isOnAuthPage,
+          isOnHomePage,
+          isOnBlogPage,
+          shouldRedirect: !isOnAuthPage && !isOnHomePage && !isOnBlogPage
+        });
+        
+        if (!isOnAuthPage && !isOnHomePage && !isOnBlogPage) {
           console.log('Redirecting to landing page (/)');
           router.push('/');
+        } else {
+          console.log('✅ Unauthenticated user can stay on current page:', pathname);
         }
       }
     }

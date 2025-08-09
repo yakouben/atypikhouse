@@ -504,6 +504,7 @@ export default function Home() {
                 <div className="space-y-2">
                   <a href="#" className="block text-green-100 hover:text-white transition-colors text-sm">Accueil</a>
                   <a href="#" className="block text-green-100 hover:text-white transition-colors text-sm">Hébergements</a>
+                  <a href="/blog" className="block text-green-100 hover:text-white transition-colors text-sm">Blog</a>
                   <a href="#" className="block text-green-100 hover:text-white transition-colors text-sm">À propos</a>
                   <a href="#" className="block text-green-100 hover:text-white transition-colors text-sm">Contact</a>
                 </div>

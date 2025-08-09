@@ -11,8 +11,8 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onReserverClick, onAddPropertyClick, onConnexionClick, onInscriptionClick }: HeroSectionProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAutoScrolling, setIsAutoScrolling] = useState(true);
 
   const images = [
@@ -35,6 +35,13 @@ export default function HeroSection({ onReserverClick, onAddPropertyClick, onCon
       hasPlayButton: false
     }
   ];
+
+  const scrollToFooter = () => {
+    const footer = document.querySelector('footer');
+    if (footer) {
+      footer.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   // Auto-scroll functionality
   useEffect(() => {
@@ -107,8 +114,8 @@ export default function HeroSection({ onReserverClick, onAddPropertyClick, onCon
                   {/* Desktop Navigation */}
                   <nav className="hidden lg:flex items-center space-x-6">
                     <a href="#" className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] text-white px-4 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-lg">Accueil</a>
-                    <a href="#" className="text-gray-700 border border-gray-300 px-4 py-2 rounded-full font-medium hover:bg-gray-50 transition-colors">Contact</a>
-                    <a href="#" className="text-gray-700 border border-gray-300 px-4 py-2 rounded-full font-medium hover:bg-gray-50 transition-colors">Blog</a>
+                    <button onClick={scrollToFooter} className="text-gray-700 border border-gray-300 px-4 py-2 rounded-full font-medium hover:bg-gray-50 transition-colors">Contact</button>
+                    <a href="/blog" className="text-gray-700 border border-gray-300 px-4 py-2 rounded-full font-medium hover:bg-gray-50 transition-colors">Blog</a>
                   </nav>
                 </div>
                 
@@ -147,8 +154,8 @@ export default function HeroSection({ onReserverClick, onAddPropertyClick, onCon
                 <div className="lg:hidden mt-4 pt-4 border-t border-gray-200">
                   <nav className="space-y-3">
                     <a href="#" className="block text-gray-700 font-medium">Accueil</a>
-                    <a href="#" className="block text-gray-700 font-medium">Contact</a>
-                    <a href="#" className="block text-gray-700 font-medium">Blog</a>
+                    <button onClick={scrollToFooter} className="block w-full text-left text-gray-700 font-medium">Contact</button>
+                    <a href="/blog" className="block text-gray-700 font-medium">Blog</a>
                     <button 
                       onClick={onConnexionClick}
                       className="block w-full text-left text-gray-700 font-medium"
