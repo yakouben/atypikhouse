@@ -223,8 +223,8 @@ export default function OwnerDashboard() {
                   <p className="text-gray-600 mb-4">
                     Commencez à louer votre propriété en l'ajoutant à notre plateforme
                   </p>
-                  <button className="inline-flex items-center space-x-2 bg-[#2d5016] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#1a3a0f] transition-colors">
-                    <Plus className="w-4 h-4" />
+                  <button className="inline-flex items-center space-x-2 bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25">
+                    <Plus className="w-5 h-5" />
                     <span>Ajouter une propriété</span>
                   </button>
                 </div>
@@ -348,7 +348,7 @@ export default function OwnerDashboard() {
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <button className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-6 py-3 rounded-lg font-medium transition-colors">
                   Modifier mon profil
                 </button>
               </div>

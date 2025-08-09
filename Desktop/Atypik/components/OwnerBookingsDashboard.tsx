@@ -425,7 +425,7 @@ export default function OwnerBookingsDashboard() {
                         <Button
                           onClick={() => updateBookingStatus(booking.id, 'confirmed')}
                           size="sm"
-                          className="bg-green-600 hover:bg-green-700"
+                          className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25"
                         >
                           Confirmer
                         </Button>
@@ -547,7 +547,7 @@ export default function OwnerBookingsDashboard() {
                       updateBookingStatus(selectedBooking.id, 'confirmed');
                       setShowBookingModal(false);
                     }}
-                    className="flex-1 bg-green-600 hover:bg-green-700"
+                    className="flex-1 bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25"
                   >
                     Confirmer la réservation
                   </Button>

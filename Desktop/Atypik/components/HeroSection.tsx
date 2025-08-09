@@ -106,7 +106,7 @@ export default function HeroSection({ onReserverClick, onAddPropertyClick, onCon
                   
                   {/* Desktop Navigation */}
                   <nav className="hidden lg:flex items-center space-x-6">
-                    <a href="#" className="bg-gray-900 text-white px-4 py-2 rounded-full font-medium transition-colors">Accueil</a>
+                    <a href="#" className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] text-white px-4 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-lg">Accueil</a>
                     <a href="#" className="text-gray-700 border border-gray-300 px-4 py-2 rounded-full font-medium hover:bg-gray-50 transition-colors">Contact</a>
                     <a href="#" className="text-gray-700 border border-gray-300 px-4 py-2 rounded-full font-medium hover:bg-gray-50 transition-colors">Blog</a>
                   </nav>
@@ -124,7 +124,7 @@ export default function HeroSection({ onReserverClick, onAddPropertyClick, onCon
                     </button>
                     <button 
                       onClick={onInscriptionClick}
-                      className="bg-gray-900 text-white px-4 py-2 rounded-full font-medium hover:bg-gray-800 transition-colors"
+                      className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] text-white px-4 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25"
                     >
                       Inscription
                     </button>
@@ -192,7 +192,7 @@ export default function HeroSection({ onReserverClick, onAddPropertyClick, onCon
                 <div className="flex items-center justify-center space-x-3 pt-2">
                   <button 
                     onClick={onReserverClick}
-                    className="bg-gray-900 text-white px-8 py-4 rounded-full font-medium hover:bg-gray-800 transition-colors text-sm sm:text-base w-full max-w-xs"
+                    className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] text-white px-8 py-4 rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25 text-sm sm:text-base w-full max-w-xs"
                   >
                     Réserver maintenant
                   </button>
@@ -293,7 +293,7 @@ export default function HeroSection({ onReserverClick, onAddPropertyClick, onCon
                   <div className="flex items-center space-x-3">
                     <button 
                       onClick={onReserverClick}
-                      className="bg-gray-900 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm sm:text-base"
+                      className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25 text-sm sm:text-base"
                     >
                       Réserver maintenant
                     </button>

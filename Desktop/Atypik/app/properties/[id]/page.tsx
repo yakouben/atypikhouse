@@ -233,61 +233,69 @@ export default function PropertyDetailPage() {
         <div className="mb-6 sm:mb-8">
           {property.images && property.images.length > 0 ? (
             <div className="relative">
-              {/* Grid Layout for large screens */}
-              <div className="lg:grid lg:grid-cols-4 lg:gap-4 lg:h-96 hidden">
-                {/* Large image on the left for lg screens */}
-                <div className="lg:col-span-3 relative bg-gray-200 rounded-2xl overflow-hidden shadow-lg">
-                  <img
-                    src={property.images[selectedImage]}
-                    alt={property.name}
-                    className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
-                    onClick={() => setShowFullImage(true)}
-                  />
-                  
-                  {/* Image counter overlay */}
-                  <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
-                    {selectedImage + 1} / {property.images.length}
-                  </div>
-                </div>
-                
-                {/* Small images on the right for lg screens */}
-                <div className="lg:col-span-1 grid grid-rows-3 gap-4 h-full">
-                  {property.images.slice(0, 3).map((image, index) => (
-                    <div 
-                      key={index} 
-                      className={`relative bg-gray-200 rounded-2xl overflow-hidden shadow-lg cursor-pointer transition-all duration-300 ${
-                        index === selectedImage ? 'ring-2 ring-[#2d5016] scale-105 shadow-xl' : 'hover:scale-105 hover:shadow-lg'
-                      }`}
-                      onClick={() => setSelectedImage(index)}
-                    >
-                      <img
-                        src={image}
-                        alt={`${property.name} - Image ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      
-                      {/* Overlay for selected image */}
-                      {index === selectedImage && (
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#2d5016]/30 to-transparent"></div>
-                      )}
+              {/* Grid Layout for large screens - Same style as mobile */}
+              <div className="lg:block hidden">
+                <div className="relative">
+                  {/* Main image with modern card design - Same as mobile */}
+                  <div className="relative h-96 xl:h-[500px] 2xl:h-[600px] bg-gray-200 rounded-3xl overflow-hidden shadow-2xl">
+                    <img
+                      src={property.images[selectedImage]}
+                      alt={property.name}
+                      className="w-full h-full object-cover"
+                    />
+                    
+                    {/* Gradient overlay for better text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+                    
+                    {/* Image counter */}
+                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                      {selectedImage + 1} / {property.images.length}
                     </div>
-                  ))}
+                  </div>
                   
-                  {/* Show more images indicator if there are more than 3 */}
-                  {property.images.length > 3 && (
-                    <div className="relative bg-gray-200 rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:scale-105 transition-all duration-300">
-                      <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                        <div className="text-center">
-                          <span className="text-2xl font-bold text-gray-600">+{property.images.length - 3}</span>
-                          <p className="text-sm text-gray-500">more</p>
-                        </div>
+                  {/* Horizontal scrolling for additional images - Same as mobile */}
+                  {property.images.length > 1 && (
+                    <div className="mt-6">
+                      <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide snap-x snap-mandatory scroll-smooth">
+                        {property.images.map((image, index) => (
+                          <div 
+                            key={index} 
+                            className={`relative flex-shrink-0 w-24 h-16 sm:w-32 sm:h-20 lg:w-40 lg:h-28 xl:w-48 xl:h-32 bg-gray-200 rounded-xl overflow-hidden shadow-lg cursor-pointer transition-all duration-300 snap-center ${
+                              index === selectedImage ? 'ring-2 ring-[#2d5016] scale-105' : 'hover:scale-105'
+                            }`}
+                            onClick={() => setSelectedImage(index)}
+                          >
+                            <img
+                              src={image}
+                              alt={`${property.name} - Image ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                            {index === selectedImage && (
+                              <div className="absolute inset-0 bg-[#2d5016]/20"></div>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
+                  
+                  {/* Image indicators - Same as mobile */}
+                  <div className="flex justify-center mt-4 space-x-2">
+                    {property.images.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          index === selectedImage 
+                            ? 'bg-[#2d5016] w-6' 
+                            : 'bg-[#696969]/30 w-2'
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
               
-              {/* Modern card design for small screens */}
+              {/* Modern card design for small screens - UNCHANGED */}
               <div className="lg:hidden">
                 <div className="relative">
                   {/* Main image with modern card design */}
@@ -603,7 +611,7 @@ export default function PropertyDetailPage() {
             </div>
             <Button 
               onClick={handleBookNow}
-              className="bg-gradient-to-r from-[#2d5016] to-[#1a3a0f] hover:from-[#1a3a0f] hover:to-[#2d5016] text-white px-8 py-3 rounded-2xl font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-0"
+              className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-8 py-3 rounded-2xl font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
             >
               Book now
             </Button>

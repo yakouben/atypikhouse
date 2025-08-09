@@ -82,6 +82,22 @@
 }
 
 @layer utilities {
+  /* Custom luxury colors */
+  .bg-mint-50 {
+    background-color: #f0f9f4;
+  }
+  .bg-beige-50 {
+    background-color: #fafaf8;
+  }
+  .from-mint-50 {
+    --tw-gradient-from: #f0f9f4;
+    --tw-gradient-to: rgb(240 249 244 / 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+  .to-beige-50 {
+    --tw-gradient-to: #fafaf8;
+  }
+  
   /* Hide scrollbar for Chrome, Safari and Opera */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
@@ -91,6 +107,33 @@
   .scrollbar-hide {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+  }
+  
+  /* Make scrollbars invisible for horizontal scrolling */
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar-track {
+    display: none;
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    display: none;
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    display: none;
+  }
+  
+  .overflow-x-auto {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox - no scrollbar */
+  }
+  
+  /* Firefox scrollbar styling */
+  .overflow-x-auto {
+    scrollbar-color: transparent transparent;
   }
   
   /* Custom scrollbar for webkit browsers */
@@ -116,28 +159,26 @@
   
   /* Green scrollbar for the entire application */
   ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 6px;
+    height: 6px;
   }
   
   ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
+    background: transparent;
   }
   
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #2d5016, #1a3a0f);
-    border-radius: 6px;
-    border: 2px solid rgba(0, 0, 0, 0.1);
+    background: rgba(74, 124, 89, 0.15);
+    border-radius: 3px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #1a3a0f, #2d5016);
+    background: rgba(74, 124, 89, 0.3);
   }
   
   /* Firefox scrollbar */
   * {
-    scrollbar-width: thick;
-    scrollbar-color: #2d5016 rgba(0, 0, 0, 0.1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(74, 124, 89, 0.15) transparent;
   }
 }

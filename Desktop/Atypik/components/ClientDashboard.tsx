@@ -234,7 +234,7 @@ export default function ClientDashboard() {
               <p className="text-gray-600 mb-4">
                 Découvrez des hébergements insolites et éco-responsables en France et en Europe.
               </p>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+              <button className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25">
                 Commencer à explorer
               </button>
             </div>
@@ -249,7 +249,7 @@ export default function ClientDashboard() {
                   <p className="text-gray-600 mb-4">
                     Vous n'avez pas encore de réservations. Commencez à explorer nos hébergements !
                   </p>
-                  <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                  <button className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25">
                     Parcourir les propriétés
                   </button>
                 </div>
@@ -390,7 +390,7 @@ export default function ClientDashboard() {
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <button className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25">
                   Modifier mon profil
                 </button>
               </div>

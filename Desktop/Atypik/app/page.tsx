@@ -4,14 +4,34 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useAuthContext } from '@/components/AuthProvider';
 import HeroSection from '@/components/HeroSection';
-import { Mountain, TreePine, Castle, Caravan, Home as HomeIcon, Star, MapPin, Users, Euro, Shield, Heart, Zap, Globe } from 'lucide-react';
+import { Mountain, TreePine, Castle, Caravan, Home as HomeIcon, Star, MapPin, Users, Euro, Shield, Heart, Zap, Globe, Building, Hotel, ArrowRight, Eye } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const { user, userProfile, loading } = useAuthContext();
   const router = useRouter();
+  const [scrollY, setScrollY] = useState(0);
+  const [activeFeature, setActiveFeature] = useState(0);
+
+  // Scroll effect for progressive reveal
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Auto-advance features for storytelling
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveFeature((prev) => (prev + 1) % 4);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleReserverClick = () => {
-    router.push('/search');
+    router.push('/auth/login');
   };
 
   const handleAddPropertyClick = () => {
@@ -34,6 +54,10 @@ export default function Home() {
     router.push(`/properties/${propertyId}`);
   };
 
+  const handleViewAllPropertiesClick = () => {
+    router.push('/auth/login');
+  };
+
   // Featured properties data
   const featuredProperties = [
     {
@@ -42,8 +66,7 @@ export default function Home() {
       location: 'Forêt de Tazekka, Maroc',
       price: 130,
       guests: 10,
-      rating: 4.9,
-      image: 'https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=800',
+      image: '/img1.jpg',
       category: 'Cabanes dans les arbres'
     },
     {
@@ -52,8 +75,7 @@ export default function Home() {
       location: 'Montagnes de l\'Atlas',
       price: 95,
       guests: 6,
-      rating: 4.8,
-      image: 'https://images.pexels.com/photos/1134166/pexels-photo-1134166.jpeg?auto=compress&cs=tinysrgb&w=800',
+      image: '/img2.jpg',
       category: 'Yourtes'
     },
     {
@@ -62,8 +84,7 @@ export default function Home() {
       location: 'Lac d\'Ifni, Maroc',
       price: 180,
       guests: 8,
-      rating: 4.7,
-      image: 'https://images.pexels.com/photos/2251247/pexels-photo-2251247.jpeg?auto=compress&cs=tinysrgb&w=800',
+      image: '/img3.jpg',
       category: 'Cabanes flottantes'
     }
   ];
@@ -74,7 +95,7 @@ export default function Home() {
       id: 1,
       name: 'Cabanes dans les arbres',
       description: 'Vivez une expérience unique perchée dans les arbres',
-      image: 'https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=800',
+      image: '/img4.jpg',
       icon: TreePine,
       count: 12
     },
@@ -82,7 +103,7 @@ export default function Home() {
       id: 2,
       name: 'Yourtes',
       description: 'Découvrez le confort traditionnel des yourtes',
-      image: 'https://images.pexels.com/photos/1134166/pexels-photo-1134166.jpeg?auto=compress&cs=tinysrgb&w=800',
+      image: '/img5.jpg',
       icon: Castle,
       count: 8
     },
@@ -90,7 +111,7 @@ export default function Home() {
       id: 3,
       name: 'Cabanes flottantes',
       description: 'Sur l\'eau, en harmonie avec les éléments',
-      image: 'https://images.pexels.com/photos/2251247/pexels-photo-2251247.jpeg?auto=compress&cs=tinysrgb&w=800',
+      image: '/img6.jpg',
       icon: Caravan,
       count: 6
     },
@@ -98,33 +119,88 @@ export default function Home() {
       id: 4,
       name: 'Autres hébergements',
       description: 'Explorez notre collection d\'hébergements insolites',
-      image: 'https://images.pexels.com/photos/1029604/pexels-photo-1029604.jpeg?auto=compress&cs=tinysrgb&w=800',
+      image: '/img1.jpg',
       icon: HomeIcon,
       count: 15
     }
   ];
 
-  // Why choose us features
+  // Why choose us features with storytelling flow
   const features = [
     {
-      icon: Shield,
-      title: 'Sécurité garantie',
-      description: 'Tous nos hébergements sont vérifiés et sécurisés pour votre tranquillité d\'esprit'
+      icon: Eye,
+      title: 'Voir une propriété',
+      description: 'Découvrez des hébergements uniques avec des photos détaillées et des descriptions complètes',
+      phonePosition: 'top-4 left-4',
+      calloutPosition: 'top-0 left-0',
+      storyStep: 'See a property'
     },
     {
-      icon: Heart,
-      title: 'Expériences authentiques',
-      description: 'Découvrez des lieux uniques et des expériences mémorables en pleine nature'
+      icon: Shield,
+      title: 'Vérifier les équipements',
+      description: 'Tous nos hébergements sont vérifiés et sécurisés pour votre tranquillité d\'esprit',
+      phonePosition: 'top-1/2 -translate-y-1/2 right-4',
+      calloutPosition: 'top-1/2 -translate-y-1/2 right-0',
+      storyStep: 'Check amenities'
     },
     {
       icon: Zap,
-      title: 'Réservation instantanée',
-      description: 'Réservez en quelques clics et recevez une confirmation immédiate'
+      title: 'Réserver instantanément',
+      description: 'Réservez en quelques clics et recevez une confirmation immédiate',
+      phonePosition: 'bottom-1/2 translate-y-1/2 left-4',
+      calloutPosition: 'bottom-1/2 translate-y-1/2 left-0',
+      storyStep: 'Book instantly'
     },
     {
-      icon: Globe,
-      title: 'Destinations variées',
-      description: 'Plus de 40 hébergements insolites au Maroc et en Europe'
+      icon: Heart,
+      title: 'Voyager en sécurité',
+      description: 'Plus de 40 hébergements insolites en Europe, tous sécurisés',
+      phonePosition: 'bottom-4 right-4',
+      calloutPosition: 'bottom-0 right-0',
+      storyStep: 'Travel securely'
+    }
+  ];
+
+  // Accommodation types for the new section
+  const accommodationTypes = [
+    {
+      name: 'Hotels',
+      icon: Hotel,
+      isActive: true
+    },
+    {
+      name: 'Cabins',
+      icon: TreePine,
+      isActive: false
+    },
+    {
+      name: 'Luxe',
+      icon: Building,
+      isActive: false
+    },
+    {
+      name: 'Castle',
+      icon: Castle,
+      isActive: false
+    }
+  ];
+
+  // Unique stays images
+  const uniqueStays = [
+    {
+      id: '1',
+      image: '/img1.jpg',
+      alt: 'Modern glass building with extensive facades'
+    },
+    {
+      id: '2',
+      image: '/img2.jpg',
+      alt: 'Circular saucer-shaped building with domed glass roof'
+    },
+    {
+      id: '3',
+      image: '/img3.jpg',
+      alt: 'Stacked dark grey rectangular modules with rounded corners'
     }
   ];
 
@@ -138,7 +214,7 @@ export default function Home() {
         onInscriptionClick={handleInscriptionClick}
       />
 
-      {/* Featured Properties Section */}
+      {/* Featured Properties Section - Horizontal Scrolling */}
       <section className="py-16 sm:py-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -150,11 +226,11 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide">
             {featuredProperties.map((property) => (
               <div 
                 key={property.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100 hover:border-green-200"
+                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100 hover:border-[#4A7C59]/30 flex-shrink-0 w-80 sm:w-96"
                 onClick={() => handlePropertyClick(property.id)}
               >
                 <div className="relative h-64 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
@@ -167,41 +243,34 @@ export default function Home() {
                   
                   {/* Category Badge */}
                   <div className="absolute top-4 left-4">
-                    <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-800 shadow-lg">
-                      <Mountain className="w-3 h-3 text-green-600" />
+                    <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-800 shadow-lg group-hover:bg-[#4A7C59]/90 group-hover:text-white transition-all duration-300">
+                      <Mountain className="w-3 h-3 text-green-600 group-hover:text-white transition-colors" />
                       <span>{property.category}</span>
                     </div>
                   </div>
                   
-                  {/* Rating Badge */}
-                  <div className="absolute top-4 right-4">
-                    <div className="flex items-center space-x-1 bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full text-sm font-bold shadow-lg">
-                      <Star className="w-3 h-3 fill-current" />
-                      <span>{property.rating}</span>
-                    </div>
-                  </div>
                 </div>
                 
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#4A7C59] transition-colors">
                     {property.name}
                   </h3>
                   
-                  <div className="flex items-center space-x-2 text-gray-600 text-sm mb-3">
-                    <MapPin className="w-4 h-4 text-green-600" />
+                  <div className="flex items-center space-x-2 text-gray-600 text-sm mb-3 group-hover:text-[#4A7C59]/80 transition-colors">
+                    <MapPin className="w-4 h-4 text-green-600 group-hover:text-[#4A7C59] transition-colors" />
                     <span>{property.location}</span>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                    <div className="flex items-center space-x-4 text-sm text-gray-600 group-hover:text-[#4A7C59]/80 transition-colors">
                       <div className="flex items-center space-x-1">
-                        <Users className="w-4 h-4 text-green-600" />
+                        <Users className="w-4 h-4 text-green-600 group-hover:text-[#4A7C59] transition-colors" />
                         <span>{property.guests} voyageurs</span>
                       </div>
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <div className="flex items-center space-x-1 text-green-600 font-semibold">
+                      <div className="flex items-center space-x-1 text-green-600 font-semibold group-hover:text-[#4A7C59] transition-colors">
                         <Euro className="w-4 h-4" />
                         <span className="text-lg">{property.price}</span>
                       </div>
@@ -214,8 +283,8 @@ export default function Home() {
           
           <div className="text-center mt-10">
             <Button 
-              onClick={handleReserverClick}
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg"
+              onClick={handleViewAllPropertiesClick}
+              className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25"
             >
               Voir tous les hébergements
             </Button>
@@ -223,58 +292,63 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="py-16 sm:py-20 bg-white">
+      {/* Categories Section - Horizontal Scrolling */}
+      <section className="py-4 sm:py-2 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               Explorez par catégorie
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Choisissez le type d'hébergement qui correspond à votre style de voyage
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Choisissez le type d'hébergement qui correspond à votre style de voyage et découvrez des expériences uniques
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          <div className="flex overflow-x-auto gap-8 pb-6 scrollbar-hide">
             {categories.map((category) => {
               const IconComponent = category.icon;
               return (
                 <div 
                   key={category.id}
-                  className="group relative overflow-hidden rounded-2xl cursor-pointer"
+                  className="group relative overflow-hidden rounded-3xl cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-700 flex-shrink-0 w-80 sm:w-96 aspect-[4/3]"
                   onClick={() => handleCategoryClick(category.id.toString())}
                 >
-                  <div className="relative h-80 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
+                  <div className="relative w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
                     <img
                       src={category.image}
                       alt={category.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-[#4A7C59]/20 group-hover:via-[#4A7C59]/10 group-hover:to-transparent transition-all duration-500"></div>
                     
                     {/* Content Overlay */}
                     <div className="absolute inset-0 flex flex-col justify-end p-8 text-white">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
-                          <IconComponent className="w-6 h-6" />
+                      {/* Badge - Fixed at top */}
+                      <div className="hidden sm:flex absolute top-4 left-4 items-center space-x-3">
+                        <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full group-hover:bg-[#4A7C59]/80 transition-all duration-300">
+                          <IconComponent className="w-5 h-5 group-hover:text-white transition-colors" />
                         </div>
-                        <span className="text-sm font-medium bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                        <span className="text-sm font-medium bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full group-hover:bg-[#4A7C59]/80 transition-all duration-300">
                           {category.count} hébergements
                         </span>
                       </div>
                       
-                      <h3 className="text-2xl font-bold mb-2 group-hover:text-green-300 transition-colors">
+                      {/* Category Name */}
+                      <h3 className="text-3xl font-bold mb-3 group-hover:text-[#4A7C59] transition-colors leading-tight">
                         {category.name}
                       </h3>
                       
-                      <p className="text-green-100 text-sm mb-4 opacity-90">
+                      {/* Description */}
+                      <p className="text-emerald-100 text-base mb-6 opacity-90 leading-relaxed group-hover:text-white group-hover:opacity-100 transition-all duration-300">
                         {category.description}
                       </p>
                       
-                      <div className="flex items-center space-x-2 text-green-200 group-hover:text-green-300 transition-colors">
-                        <span className="font-medium">Découvrir</span>
-                        <div className="w-5 h-5 border-2 border-current rounded-full flex items-center justify-center">
-                          <div className="w-2 h-2 bg-current rounded-full"></div>
+                      {/* Discover Link */}
+                      <div className="flex items-center space-x-3 text-emerald-200 group-hover:text-[#4A7C59] transition-colors">
+                        <span className="font-semibold text-lg">Découvrir</span>
+                        <div className="w-8 h-8 border-2 border-current rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 group-hover:border-[#4A7C59]">
+                          <div className="w-2 h-2 bg-current rounded-full group-hover:bg-[#4A7C59] transition-colors"></div>
                         </div>
                       </div>
                     </div>
@@ -286,52 +360,178 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
-      <section className="py-16 sm:py-20 bg-gradient-to-br from-green-50 to-emerald-50">
+      {/* Why Choose Us Section - Progressive Reveal Animation */}
+      <section className="py-4 sm:py-4 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          {/* Centered Title */}
+          <div className="text-center mb-8 lg:mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 leading-tight">
               Pourquoi choisir AtypikHouse ?
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Nous vous offrons une expérience unique et mémorable pour vos voyages
+            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+              Découvrez notre storytelling interactif qui vous guide à travers l'expérience utilisateur
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left Side - Phone Image with Progressive Reveal */}
+            <div className="order-2 lg:order-1">
+              <div className="relative flex justify-center lg:justify-start">
+                <div className="relative w-64 sm:w-72 lg:w-96 h-auto max-w-sm lg:max-w-none">
+                  {/* Phone Image - No background, clean display */}
+                  <img
+                    src="/phone4.png"
+                    alt="AtypikHouse Mobile App"
+                    className="w-full h-auto object-contain lg:h-[600px] lg:object-contain"
+                  />
+
+                  {/* Callout Bubbles for Active Features */}
+                  {features.map((feature, index) => (
+                    <div
+                      key={index}
+                      className={`absolute ${feature.phonePosition} transition-all duration-1000 ${
+                        activeFeature === index 
+                          ? 'opacity-100 scale-100' 
+                          : 'opacity-0 scale-75'
+                      }`}
+                    >
+                      {/* Callout Arrow */}
+                      <div className={`absolute ${feature.calloutPosition} w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-[#4A7C59] transform rotate-45`}></div>
+                      
+                      {/* Callout Bubble */}
+                      <div className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] text-white px-3 py-2 rounded-xl shadow-lg max-w-xs">
+                        <div className="flex items-center space-x-2">
+                          <feature.icon className="w-3 h-3" />
+                          <span className="text-xs font-medium">{feature.storyStep}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Progressive Content */}
+            <div className="order-1 lg:order-2">
+              <div className="space-y-3 sm:space-y-4">
             {features.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
                 <div 
                   key={index}
-                  className="group text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100"
+                      className={`group bg-white rounded-2xl p-4 sm:p-5 shadow-lg transition-all duration-1000 border-2 cursor-pointer ${
+                        activeFeature === index 
+                          ? 'border-[#4A7C59] shadow-[#4A7C59]/25 scale-105' 
+                          : 'border-gray-100 hover:border-[#4A7C59]/50'
+                      }`}
+                      onClick={() => setActiveFeature(index)}
                 >
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <IconComponent className="w-8 h-8" />
+                      <div className="flex items-start space-x-3 sm:space-x-4">
+                        <div className={`inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-2xl transition-all duration-500 flex-shrink-0 ${
+                          activeFeature === index
+                            ? 'bg-gradient-to-br from-[#4A7C59] to-[#2C3E37] text-white scale-110 shadow-lg'
+                            : 'bg-gray-100 text-gray-600 group-hover:bg-[#4A7C59]/10 group-hover:text-[#4A7C59]'
+                        }`}>
+                          <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
                   </div>
                   
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
+                        <div className="flex-1 min-w-0">
+                          <h3 className={`text-base sm:text-lg lg:text-xl font-bold mb-1 sm:mb-2 transition-colors duration-300 ${
+                            activeFeature === index ? 'text-[#4A7C59]' : 'text-gray-900'
+                          }`}>
                     {feature.title}
                   </h3>
                   
-                  <p className="text-gray-600 leading-relaxed">
+                          <p className={`text-xs sm:text-sm lg:text-base leading-relaxed transition-all duration-500 ${
+                            activeFeature === index 
+                              ? 'text-gray-700 opacity-100' 
+                              : 'text-gray-600 opacity-70'
+                          }`}>
                     {feature.description}
                   </p>
+                          
+                          {/* Story Step Badge */}
+                          <div className={`mt-2 sm:mt-3 inline-flex items-center space-x-2 px-2 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
+                            activeFeature === index
+                              ? 'bg-[#4A7C59]/10 text-[#4A7C59]'
+                              : 'bg-gray-100 text-gray-500'
+                          }`}>
+                            <span>{feature.storyStep}</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </div>
+                        </div>
+                      </div>
                 </div>
               );
             })}
           </div>
           
-          <div className="text-center mt-12">
+              <div className="text-center lg:text-left mt-6 sm:mt-8">
             <Button 
               onClick={handleInscriptionClick}
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 shadow-lg"
+                  className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-6 sm:px-8 lg:px-10 py-2 sm:py-3 lg:py-4 rounded-2xl font-semibold text-sm sm:text-base lg:text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25 w-full sm:w-auto"
             >
               Commencer l'aventure
             </Button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="space-y-8">
+            {/* Logo and Description - Full width */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <TreePine className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-xl font-bold">AtypikHouse</span>
+              </div>
+              <p className="text-green-100 text-sm leading-relaxed">
+                Découvrez des hébergements insolites et des expériences mémorables en Europe.
+              </p>
+            </div>
+
+            {/* Quick Links and Contact - 2-column grid on sm */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-8">
+              {/* Quick Links */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-lg">Liens rapides</h3>
+                <div className="space-y-2">
+                  <a href="#" className="block text-green-100 hover:text-white transition-colors text-sm">Accueil</a>
+                  <a href="#" className="block text-green-100 hover:text-white transition-colors text-sm">Hébergements</a>
+                  <a href="#" className="block text-green-100 hover:text-white transition-colors text-sm">À propos</a>
+                  <a href="#" className="block text-green-100 hover:text-white transition-colors text-sm">Contact</a>
+                </div>
+              </div>
+
+              {/* Contact Info */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-lg">Contact</h3>
+                <div className="space-y-2 text-sm text-green-100">
+                  <p>contact@atypikhouse.com</p>
+                  <p>+33 6 12 34 56 78</p>
+                  <p>Europe</p>
+                </div>
+              </div>
+
+              {/* Empty space for lg screens to maintain 3-column layout */}
+              <div className="hidden lg:block"></div>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="border-t border-white/20 mt-8 pt-8 text-center">
+            <p className="text-green-100 text-sm">
+              © 2024 AtypikHouse. Tous droits réservés.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -236,11 +236,11 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                 <div className="space-y-3 sm:space-y-4">
                   <button
                     onClick={() => handleUserTypeSelect('owner')}
-                    className="w-full p-4 sm:p-6 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all duration-300 text-left group"
+                    className="w-full p-4 sm:p-6 border-2 border-gray-200 rounded-xl hover:border-[#4A7C59] hover:bg-[#4A7C59]/5 transition-all duration-300 text-left group"
                   >
                     <div className="flex items-center space-x-3 sm:space-x-4">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                        <Building className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#4A7C59]/10 rounded-full flex items-center justify-center group-hover:bg-[#4A7C59]/20 transition-colors">
+                        <Building className="w-5 h-5 sm:w-6 sm:h-6 text-[#4A7C59]" />
                       </div>
                       <div>
                         <h3 className="text-base sm:text-lg font-semibold text-gray-900">Propriétaire</h3>
@@ -251,11 +251,11 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                   
                   <button
                     onClick={() => handleUserTypeSelect('client')}
-                    className="w-full p-4 sm:p-6 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all duration-300 text-left group"
+                    className="w-full p-4 sm:p-6 border-2 border-gray-200 rounded-xl hover:border-[#4A7C59] hover:bg-[#4A7C59]/5 transition-all duration-300 text-left group"
                   >
                     <div className="flex items-center space-x-3 sm:space-x-4">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                        <Users className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#4A7C59]/10 rounded-full flex items-center justify-center group-hover:bg-[#4A7C59]/20 transition-colors">
+                        <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#4A7C59]" />
                       </div>
                       <div>
                         <h3 className="text-base sm:text-lg font-semibold text-gray-900">Client</h3>
@@ -276,7 +276,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                       placeholder="Email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 text-sm sm:text-base"
+                      className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-[#4A7C59] focus:ring-[#4A7C59] text-sm sm:text-base"
                       disabled={isLoading}
                     />
                   </div>
@@ -288,7 +288,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                       placeholder="Mot de passe"
                       value={formData.password}
                       onChange={(e) => handleInputChange('password', e.target.value)}
-                      className="pl-10 sm:pl-12 pr-12 sm:pr-14 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 text-sm sm:text-base"
+                      className="pl-10 sm:pl-12 pr-12 sm:pr-14 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-[#4A7C59] focus:ring-[#4A7C59] text-sm sm:text-base"
                       disabled={isLoading}
                     />
                     <button
@@ -304,7 +304,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                   <div className="text-right">
                     <button 
                       type="button" 
-                      className="text-green-600 hover:text-green-700 text-xs sm:text-sm font-medium"
+                      className="text-[#4A7C59] hover:text-[#2C3E37] text-xs sm:text-sm font-medium"
                       onClick={handleForgotPassword}
                       disabled={isLoading}
                     >
@@ -314,7 +314,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
 
                   <Button
                     type="submit"
-                    className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300"
+                    className="w-full bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Connexion en cours...' : 'Se connecter'}
@@ -333,7 +333,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                       placeholder="Nom complet"
                       value={formData.fullName}
                       onChange={(e) => handleInputChange('fullName', e.target.value)}
-                      className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 text-sm sm:text-base"
+                      className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-[#4A7C59] focus:ring-[#4A7C59] text-sm sm:text-base"
                       disabled={isLoading}
                     />
                   </div>
@@ -346,7 +346,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                       placeholder="Email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 text-sm sm:text-base"
+                      className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-[#4A7C59] focus:ring-[#4A7C59] text-sm sm:text-base"
                       disabled={isLoading}
                     />
                   </div>
@@ -361,7 +361,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                           placeholder="Adresse"
                           value={formData.address}
                           onChange={(e) => handleInputChange('address', e.target.value)}
-                          className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 text-sm sm:text-base"
+                          className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-[#4A7C59] focus:ring-[#4A7C59] text-sm sm:text-base"
                           disabled={isLoading}
                         />
                       </div>
@@ -373,7 +373,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                           placeholder="Que possédez-vous ? (cabanes, yourtes, etc.)"
                           value={formData.whatYouOwn}
                           onChange={(e) => handleInputChange('whatYouOwn', e.target.value)}
-                          className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 text-sm sm:text-base"
+                          className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-[#4A7C59] focus:ring-[#4A7C59] text-sm sm:text-base"
                           disabled={isLoading}
                         />
                       </div>
@@ -389,7 +389,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                         placeholder="Avec qui voulez-vous réserver ? (famille, amis, etc.)"
                         value={formData.reservationType}
                         onChange={(e) => handleInputChange('reservationType', e.target.value)}
-                        className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 text-sm sm:text-base"
+                        className="pl-10 sm:pl-12 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-[#4A7C59] focus:ring-[#4A7C59] text-sm sm:text-base"
                         disabled={isLoading}
                       />
                     </div>
@@ -403,7 +403,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                       placeholder="Mot de passe"
                       value={formData.password}
                       onChange={(e) => handleInputChange('password', e.target.value)}
-                      className="pl-10 sm:pl-12 pr-12 sm:pr-14 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 text-sm sm:text-base"
+                      className="pl-10 sm:pl-12 pr-12 sm:pr-14 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-[#4A7C59] focus:ring-[#4A7C59] text-sm sm:text-base"
                       disabled={isLoading}
                     />
                     <button
@@ -424,7 +424,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                       placeholder="Confirmer le mot de passe"
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                      className="pl-10 sm:pl-12 pr-12 sm:pr-14 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 text-sm sm:text-base"
+                      className="pl-10 sm:pl-12 pr-12 sm:pr-14 py-3 sm:py-4 border-gray-200 rounded-xl focus:border-[#4A7C59] focus:ring-[#4A7C59] text-sm sm:text-base"
                       disabled={isLoading}
                     />
                     <button
@@ -439,7 +439,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
 
                   <Button
                     type="submit"
-                    className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300"
+                    className="w-full bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Création du compte...' : 'Créer mon compte'}
@@ -454,7 +454,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                     Vous n'avez pas de compte ?{' '}
                     <button
                       onClick={handleSignUpClick}
-                      className="text-green-600 hover:text-green-700 font-medium"
+                      className="text-[#4A7C59] hover:text-[#2C3E37] font-medium"
                     >
                       Créer un compte
                     </button>
@@ -466,7 +466,7 @@ export default function SignInModal({ isOpen, onClose, initialStep = 'login', in
                     Vous avez déjà un compte ?{' '}
                     <button
                       onClick={handleBackToLogin}
-                      className="text-green-600 hover:text-green-700 font-medium"
+                      className="text-[#4A7C59] hover:text-[#2C3E37] font-medium"
                     >
                       Se connecter
                     </button>
