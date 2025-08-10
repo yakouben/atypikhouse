@@ -19,6 +19,16 @@ const config: Config = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
+      },
+      gridTemplateColumns: {
+        'navbar-sm': 'repeat(auto-fit, minmax(280px, 1fr))',
+        'navbar-md': 'repeat(auto-fit, minmax(320px, 1fr))',
+        'navbar-lg': 'repeat(auto-fit, minmax(360px, 1fr))',
+      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -85,6 +95,28 @@ const config: Config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    function({ addUtilities }: any) {
+      addUtilities({
+        '.scrollbar-hide': {
+          /* IE and Edge */
+          '-ms-overflow-style': 'none',
+          /* Firefox */
+          'scrollbar-width': 'none',
+          /* Safari and Chrome */
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          }
+        },
+        '.line-clamp-2': {
+          'display': '-webkit-box',
+          '-webkit-line-clamp': '2',
+          '-webkit-box-orient': 'vertical',
+          'overflow': 'hidden'
+        }
+      })
+    }
+  ],
 };
 export default config;

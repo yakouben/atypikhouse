@@ -66,7 +66,7 @@ export default function Home() {
       location: 'Forêt de Tazekka, Maroc',
       price: 130,
       guests: 10,
-      image: '/img1.jpg',
+      image: 'https://plus.unsplash.com/premium_photo-1687710306899-10a3bfcacf9b?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       category: 'Cabanes dans les arbres'
     },
     {
@@ -75,7 +75,7 @@ export default function Home() {
       location: 'Montagnes de l\'Atlas',
       price: 95,
       guests: 6,
-      image: '/img2.jpg',
+      image: 'https://plus.unsplash.com/premium_photo-1719610047551-d9343735daeb?q=80&w=1069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       category: 'Yourtes'
     },
     {
@@ -84,7 +84,7 @@ export default function Home() {
       location: 'Lac d\'Ifni, Maroc',
       price: 180,
       guests: 8,
-      image: '/img3.jpg',
+      image: 'https://images.unsplash.com/photo-1583187231125-45b66b4eeb80?q=80&w=464&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       category: 'Cabanes flottantes'
     }
   ];
@@ -103,7 +103,7 @@ export default function Home() {
       id: 2,
       name: 'Yourtes',
       description: 'Découvrez le confort traditionnel des yourtes',
-      image: '/img5.jpg',
+      image: 'https://plus.unsplash.com/premium_photo-1686090449933-2057b9fba09c?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       icon: Castle,
       count: 8
     },
@@ -111,7 +111,7 @@ export default function Home() {
       id: 3,
       name: 'Cabanes flottantes',
       description: 'Sur l\'eau, en harmonie avec les éléments',
-      image: '/img6.jpg',
+      image: 'https://images.unsplash.com/photo-1618396755206-ff25b5737b8a?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       icon: Caravan,
       count: 6
     },
@@ -214,7 +214,7 @@ export default function Home() {
         onInscriptionClick={handleInscriptionClick}
       />
 
-      {/* Featured Properties Section - Horizontal Scrolling */}
+      {/* Featured Properties Section - Modern Horizontal Navbar */}
       <section className="py-16 sm:py-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -226,14 +226,15 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide">
+          {/* Modern Horizontal Flex Layout - Better Mobile Experience */}
+          <div className="flex flex-nowrap gap-4 sm:gap-6 overflow-x-auto pb-4 scrollbar-hide">
             {featuredProperties.map((property) => (
               <div 
                 key={property.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100 hover:border-[#4A7C59]/30 flex-shrink-0 w-80 sm:w-96"
+                className="flex-shrink-0 w-80 sm:w-96 bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100 hover:border-[#4A7C59]/30"
                 onClick={() => handlePropertyClick(property.id)}
               >
-                <div className="relative h-64 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
+                <div className="relative h-48 sm:h-56 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
                   <img
                     src={property.image}
                     alt={property.name}
@@ -242,7 +243,7 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
                   {/* Category Badge */}
-                  <div className="absolute top-4 left-4">
+                  <div className="absolute top-3 left-3">
                     <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-800 shadow-lg group-hover:bg-[#4A7C59]/90 group-hover:text-white transition-all duration-300">
                       <Mountain className="w-3 h-3 text-green-600 group-hover:text-white transition-colors" />
                       <span>{property.category}</span>
@@ -251,28 +252,29 @@ export default function Home() {
                   
                 </div>
                 
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#4A7C59] transition-colors">
+                <div className="p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 group-hover:text-[#4A7C59] transition-colors line-clamp-2">
                     {property.name}
                   </h3>
                   
                   <div className="flex items-center space-x-2 text-gray-600 text-sm mb-3 group-hover:text-[#4A7C59]/80 transition-colors">
-                    <MapPin className="w-4 h-4 text-green-600 group-hover:text-[#4A7C59] transition-colors" />
-                    <span>{property.location}</span>
+                    <MapPin className="w-4 h-4 text-green-600 group-hover:text-[#4A7C59] transition-colors flex-shrink-0" />
+                    <span className="truncate">{property.location}</span>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 text-sm text-gray-600 group-hover:text-[#4A7C59]/80 transition-colors">
+                    <div className="flex items-center space-x-1 sm:space-x-4 text-sm text-gray-600 group-hover:text-[#4A7C59]/80 transition-colors">
                       <div className="flex items-center space-x-1">
-                        <Users className="w-4 h-4 text-green-600 group-hover:text-[#4A7C59] transition-colors" />
-                        <span>{property.guests} voyageurs</span>
+                        <Users className="w-4 h-4 text-green-600 group-hover:text-[#4A7C59] transition-colors flex-shrink-0" />
+                        <span className="hidden sm:inline">{property.guests} voyageurs</span>
+                        <span className="sm:hidden">{property.guests}</span>
                       </div>
                     </div>
                     
                     <div className="flex items-center space-x-2">
                       <div className="flex items-center space-x-1 text-green-600 font-semibold group-hover:text-[#4A7C59] transition-colors">
-                        <Euro className="w-4 h-4" />
-                        <span className="text-lg">{property.price}</span>
+                        <Euro className="w-4 h-4 flex-shrink-0" />
+                        <span className="text-base sm:text-lg">{property.price}</span>
                       </div>
                     </div>
                   </div>
@@ -292,7 +294,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories Section - Horizontal Scrolling */}
+      {/* Categories Section - Modern Horizontal Navbar */}
       <section className="py-4 sm:py-2 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -304,13 +306,14 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="flex overflow-x-auto gap-8 pb-6 scrollbar-hide">
+          {/* Modern Horizontal Navbar - Responsive Grid */}
+          <div className="navbar-grid scrollbar-hide">
             {categories.map((category) => {
               const IconComponent = category.icon;
               return (
                 <div 
                   key={category.id}
-                  className="group relative overflow-hidden rounded-3xl cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-700 flex-shrink-0 w-80 sm:w-96 aspect-[4/3]"
+                  className="navbar-item group relative overflow-hidden rounded-2xl cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-700 aspect-[4/3]"
                   onClick={() => handleCategoryClick(category.id.toString())}
                 >
                   <div className="relative w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
@@ -323,32 +326,32 @@ export default function Home() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-[#4A7C59]/20 group-hover:via-[#4A7C59]/10 group-hover:to-transparent transition-all duration-500"></div>
                     
                     {/* Content Overlay */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-8 text-white">
-                      {/* Badge - Fixed at top */}
-                      <div className="hidden sm:flex absolute top-4 left-4 items-center space-x-3">
+                    <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 text-white">
+                      {/* Badge - Responsive positioning */}
+                      <div className="absolute top-3 left-3 flex items-center space-x-2">
                         <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full group-hover:bg-[#4A7C59]/80 transition-all duration-300">
-                          <IconComponent className="w-5 h-5 group-hover:text-white transition-colors" />
+                          <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 group-hover:text-white transition-colors" />
                         </div>
-                        <span className="text-sm font-medium bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full group-hover:bg-[#4A7C59]/80 transition-all duration-300">
+                        <span className="text-xs sm:text-sm font-medium bg-white/20 backdrop-blur-sm px-2 sm:px-4 py-1 sm:py-2 rounded-full group-hover:bg-[#4A7C59]/80 transition-all duration-300">
                           {category.count} hébergements
                         </span>
                       </div>
                       
                       {/* Category Name */}
-                      <h3 className="text-3xl font-bold mb-3 group-hover:text-[#4A7C59] transition-colors leading-tight">
+                      <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 text-white leading-tight">
                         {category.name}
                       </h3>
                       
                       {/* Description */}
-                      <p className="text-emerald-100 text-base mb-6 opacity-90 leading-relaxed group-hover:text-white group-hover:opacity-100 transition-all duration-300">
+                      <p className="text-white text-sm sm:text-base mb-4 sm:mb-6 opacity-90 leading-relaxed line-clamp-2">
                         {category.description}
                       </p>
                       
                       {/* Discover Link */}
-                      <div className="flex items-center space-x-3 text-emerald-200 group-hover:text-[#4A7C59] transition-colors">
-                        <span className="font-semibold text-lg">Découvrir</span>
-                        <div className="w-8 h-8 border-2 border-current rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 group-hover:border-[#4A7C59]">
-                          <div className="w-2 h-2 bg-current rounded-full group-hover:bg-[#4A7C59] transition-colors"></div>
+                      <div className="flex items-center space-x-2 sm:space-x-3 text-white">
+                        <span className="font-semibold text-base sm:text-lg">Découvrir</span>
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full"></div>
                         </div>
                       </div>
                     </div>

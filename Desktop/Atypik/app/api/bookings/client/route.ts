@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createServerClient } from '@/lib/supabase';
+import { cookies } from 'next/headers';
 
 export async function GET(request: NextRequest) {
   try {
+    const cookieStore = cookies();
+    const supabase = createServerClient(cookieStore);
+    
+    // Get the current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Get the client ID from query parameters
     const { searchParams } = new URL(request.url);
     const clientId = searchParams.get('clientId');
 
@@ -13,63 +28,56 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // First, get the user's bookings
+    // Verify the user is requesting their own bookings
+    if (clientId !== user.id) {
+      return NextResponse.json(
+        { error: 'Forbidden: You can only view your own bookings' },
+        { status: 403 }
+      );
+    }
+
+    // Fetch bookings for the client
     const { data: bookings, error: bookingsError } = await supabase
       .from('bookings')
-      .select('*')
+      .select(`
+        id,
+        check_in_date,
+        check_out_date,
+        total_price,
+        status,
+        guest_count,
+        special_requests,
+        full_name,
+        email_or_phone,
+        travel_type,
+        created_at,
+        updated_at,
+        properties (
+          id,
+          name,
+          location,
+          images
+        )
+      `)
       .eq('client_id', clientId)
       .order('created_at', { ascending: false });
 
     if (bookingsError) {
-      console.error('Error fetching bookings:', bookingsError);
+      console.error('Error fetching client bookings:', bookingsError);
       return NextResponse.json(
         { error: 'Failed to fetch bookings' },
         { status: 500 }
       );
     }
 
-    // If no bookings, return empty array
-    if (!bookings || bookings.length === 0) {
-      return NextResponse.json({ data: [] });
-    }
-
-    // Get property IDs from bookings
-    const propertyIds = bookings.map(booking => booking.property_id);
-
-    // Fetch properties for these bookings
-    const { data: properties, error: propertiesError } = await supabase
-      .from('properties')
-      .select('id, name, location, images')
-      .in('id', propertyIds);
-
-    if (propertiesError) {
-      console.error('Error fetching properties:', propertiesError);
-      return NextResponse.json(
-        { error: 'Failed to fetch properties' },
-        { status: 500 }
-      );
-    }
-
-    // Create a map of properties by ID
-    const propertiesMap = new Map();
-    properties?.forEach(property => {
-      propertiesMap.set(property.id, property);
+    return NextResponse.json({
+      success: true,
+      data: bookings || [],
+      message: 'Client bookings fetched successfully'
     });
 
-    // Combine bookings with their properties
-    const bookingsWithProperties = bookings.map(booking => ({
-      ...booking,
-      properties: propertiesMap.get(booking.property_id) || {
-        name: 'Propriété inconnue',
-        location: 'Localisation inconnue',
-        images: []
-      }
-    }));
-
-    return NextResponse.json({ data: bookingsWithProperties });
-
   } catch (error) {
-    console.error('Exception in client bookings API:', error);
+    console.error('Error in GET /api/bookings/client:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

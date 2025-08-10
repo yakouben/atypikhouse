@@ -113,12 +113,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 6: Check for existing bookings that overlap with the requested dates
+    console.log('🔍 Checking for existing bookings...');
+    console.log('Requested dates:', { check_in_date, check_out_date });
+    
     const { data: existingBookings, error: existingBookingsError } = await supabase
       .from('bookings')
       .select('id, check_in_date, check_out_date, status')
       .eq('property_id', property_id)
-      .in('status', ['pending', 'confirmed'])
-      .or(`check_in_date.lte.${check_out_date},check_out_date.gte.${check_in_date}`);
+      .in('status', ['pending', 'confirmed']);
 
     if (existingBookingsError) {
       console.error('Error checking existing bookings:', existingBookingsError);
@@ -128,12 +130,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (existingBookings && existingBookings.length > 0) {
+    console.log('Existing bookings found:', existingBookings?.length || 0);
+
+    // Check for date overlaps manually
+    const hasOverlap = existingBookings?.some(booking => {
+      const existingCheckIn = new Date(booking.check_in_date);
+      const existingCheckOut = new Date(booking.check_out_date);
+      const requestedCheckIn = new Date(check_in_date);
+      const requestedCheckOut = new Date(check_out_date);
+
+      // Check if the requested dates overlap with existing booking
+      // Overlap occurs when:
+      // 1. Requested check-in is before existing check-out AND requested check-out is after existing check-in
+      const overlaps = requestedCheckIn < existingCheckOut && requestedCheckOut > existingCheckIn;
+      
+      if (overlaps) {
+        console.log('🚫 Overlap detected with booking:', {
+          existing: { check_in: booking.check_in_date, check_out: booking.check_out_date },
+          requested: { check_in: check_in_date, check_out: check_out_date }
+        });
+      }
+      
+      return overlaps;
+    });
+
+    if (hasOverlap) {
+      console.log('❌ Date conflict detected');
       return NextResponse.json(
         { error: 'Property is not available for the selected dates' },
         { status: 400 }
       );
     }
+
+    console.log('✅ No date conflicts found');
 
     // Step 7: Prepare the booking data for insertion
     const newBooking = {
@@ -223,6 +252,7 @@ export async function GET(request: NextRequest) {
     const propertyId = searchParams.get('propertyId');
     const clientId = searchParams.get('clientId');
     const ownerId = searchParams.get('ownerId');
+    const debug = searchParams.get('debug') === 'true';
 
     let query = supabaseAdmin.from('bookings').select(`
       *,
@@ -264,7 +294,20 @@ export async function GET(request: NextRequest) {
 
     console.log('✅ Bookings retrieved successfully:', bookings?.length || 0);
 
-    return NextResponse.json({ data: bookings || [] });
+    // Add debug information if requested
+    if (debug && propertyId) {
+      console.log('🔍 Debug info for property:', propertyId);
+      console.log('All bookings for this property:', bookings?.filter(b => b.property_id === propertyId));
+    }
+
+    return NextResponse.json({ 
+      data: bookings || [],
+      debug: debug ? {
+        propertyId,
+        totalBookings: bookings?.length || 0,
+        propertyBookings: bookings?.filter(b => b.property_id === propertyId) || []
+      } : undefined
+    });
 
   } catch (error) {
     console.error('Exception in bookings GET API:', error);

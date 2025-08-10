@@ -148,33 +148,87 @@ export default function OwnerBookingsDashboard({ onBookingUpdate }: OwnerBooking
 
   const updateBookingStatus = async (bookingId: string, newStatus: string) => {
     try {
-      const response = await fetch('/api/bookings/owner', {
+      setLoading(true);
+      
+      const response = await fetch(`/api/bookings/${bookingId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          bookingId,
-          status: newStatus
-        }),
+        body: JSON.stringify({ status: newStatus }),
       });
 
-      const result = await response.json();
-
       if (response.ok) {
-        // Reload bookings to get updated data
+        // Update the local state
+        setBookings(prevBookings => 
+          prevBookings.map(booking => 
+            booking.id === bookingId 
+              ? { ...booking, status: newStatus as any }
+              : booking
+          )
+        );
+        
+        // Show success message
+        alert(`Réservation ${newStatus === 'confirmed' ? 'confirmée' : 'annulée'} avec succès !`);
+        
+        // Refresh the data
         await loadBookings();
-        // Notify parent component to refresh its data
+        
+        // Call the callback to refresh parent data
         if (onBookingUpdate) {
           onBookingUpdate();
         }
-        return { success: true, message: 'Booking status updated successfully' };
       } else {
-        return { success: false, message: result.error || 'Failed to update booking status' };
+        const errorData = await response.json();
+        console.error('Error updating booking:', errorData);
+        alert(`Erreur lors de la mise à jour: ${errorData.error || 'Erreur inconnue'}`);
       }
     } catch (error) {
       console.error('Error updating booking status:', error);
-      return { success: false, message: 'Failed to update booking status' };
+      alert('Erreur lors de la mise à jour du statut');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteBooking = async (bookingId: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette réservation ? Cette action est irréversible.')) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      const response = await fetch(`/api/bookings/${bookingId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Remove the booking from local state
+        setBookings(prevBookings => 
+          prevBookings.filter(booking => booking.id !== bookingId)
+        );
+        
+        // Show success message
+        alert('Réservation supprimée avec succès !');
+        
+        // Refresh the data
+        await loadBookings();
+        
+        // Call the callback to refresh parent data
+        if (onBookingUpdate) {
+          onBookingUpdate();
+        }
+      } else {
+        const errorData = await response.json();
+        console.error('Error deleting booking:', errorData);
+        alert(`Erreur lors de la suppression: ${errorData.error || 'Erreur inconnue'}`);
+      }
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      alert('Erreur lors de la suppression de la réservation');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -234,45 +288,46 @@ export default function OwnerBookingsDashboard({ onBookingUpdate }: OwnerBooking
   return (
     <div className="space-y-6">
       {/* Enhanced Stats Cards with Modern Design */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 shadow-lg border border-blue-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-blue-600">Total Réservations</p>
-              <p className="text-3xl font-bold text-blue-900">{stats.total}</p>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+        <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">
+          <div className="flex-shrink-0 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 min-w-[160px] border border-blue-200">
+            <div className="flex flex-col items-center text-center">
+              <Calendar className="w-8 h-8 text-blue-500 mb-2" />
+              <p className="text-xs font-medium text-blue-600 mb-1">Total Réservations</p>
+              <p className="text-2xl font-bold text-blue-900">{stats.total}</p>
             </div>
-            <Calendar className="w-10 h-10 text-blue-500" />
+          </div>
+          
+          <div className="flex-shrink-0 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-4 min-w-[160px] border border-yellow-200">
+            <div className="flex flex-col items-center text-center">
+              <Clock className="w-8 h-8 text-yellow-500 mb-2" />
+              <p className="text-xs font-medium text-yellow-600 mb-1">En Attente</p>
+              <p className="text-2xl font-bold text-yellow-900">{stats.pending}</p>
+            </div>
+          </div>
+          
+          <div className="flex-shrink-0 bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4 min-w-[160px] border border-green-200">
+            <div className="flex flex-col items-center text-center">
+              <CheckCircle className="w-8 h-8 text-green-500 mb-2" />
+              <p className="text-xs font-medium text-green-600 mb-1">Confirmées</p>
+              <p className="text-2xl font-bold text-green-900">{stats.confirmed}</p>
+            </div>
+          </div>
+          
+          <div className="flex-shrink-0 bg-gradient-to-r from-[#4A7C59]/10 to-[#2C3E37]/10 rounded-xl p-4 min-w-[160px] border border-[#4A7C59]/20">
+            <div className="flex flex-col items-center text-center">
+              <Euro className="w-8 h-8 text-[#4A7C59] mb-2" />
+              <p className="text-xs font-medium text-[#4A7C59] mb-1">Revenus</p>
+              <p className="text-2xl font-bold text-[#2C3E37]">{formatPrice(stats.revenue)}</p>
+            </div>
           </div>
         </div>
         
-        <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-6 shadow-lg border border-yellow-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-yellow-600">En Attente</p>
-              <p className="text-3xl font-bold text-yellow-900">{stats.pending}</p>
-            </div>
-            <Clock className="w-10 h-10 text-yellow-500" />
-          </div>
-        </div>
-        
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 shadow-lg border border-green-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-green-600">Confirmées</p>
-              <p className="text-3xl font-bold text-green-900">{stats.confirmed}</p>
-            </div>
-            <CheckCircle className="w-10 h-10 text-green-500" />
-          </div>
-        </div>
-        
-        <div className="bg-gradient-to-br from-[#4A7C59]/10 to-[#2C3E37]/10 rounded-2xl p-6 shadow-lg border border-[#4A7C59]/20">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-[#4A7C59]">Revenus</p>
-              <p className="text-3xl font-bold text-[#2C3E37]">{formatPrice(stats.revenue)}</p>
-            </div>
-            <Euro className="w-10 h-10 text-[#4A7C59]" />
-          </div>
+        {/* Scroll indicator for small screens */}
+        <div className="flex justify-center mt-2">
+          <div className="w-2 h-2 bg-gray-300 rounded-full mx-1"></div>
+          <div className="w-2 h-2 bg-gray-300 rounded-full mx-1"></div>
+          <div className="w-2 h-2 bg-gray-300 rounded-full mx-1"></div>
         </div>
       </div>
 
@@ -486,8 +541,9 @@ export default function OwnerBookingsDashboard({ onBookingUpdate }: OwnerBooking
                         <Button
                           onClick={() => updateBookingStatus(booking.id, 'confirmed')}
                           size="sm"
-                        className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25"
+                          className="bg-gradient-to-r from-[#4A7C59] to-[#2C3E37] hover:from-[#2C3E37] hover:to-[#4A7C59] text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#4A7C59]/25"
                         >
+                          <CheckCircle className="w-4 h-4 mr-1" />
                           Confirmer
                         </Button>
                         <Button
@@ -496,10 +552,22 @@ export default function OwnerBookingsDashboard({ onBookingUpdate }: OwnerBooking
                           size="sm"
                           className="border-red-200 text-red-600 hover:bg-red-50"
                         >
+                          <XCircle className="w-4 h-4 mr-1" />
                           Refuser
                         </Button>
                       </div>
                     )}
+
+                    {/* Delete Button for all statuses */}
+                    <Button
+                      onClick={() => deleteBooking(booking.id)}
+                      variant="outline"
+                      size="sm"
+                      className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+                    >
+                      <XCircle className="w-4 h-4 mr-1" />
+                      Supprimer
+                    </Button>
                 </div>
               </div>
             ))}
@@ -687,6 +755,23 @@ export default function OwnerBookingsDashboard({ onBookingUpdate }: OwnerBooking
                   </div>
                 </div>
               )}
+
+              {/* Delete Button in Modal */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    onClick={() => {
+                      deleteBooking(selectedBooking.id);
+                      setShowBookingModal(false);
+                    }}
+                    variant="outline"
+                    className="flex-1 border-red-200 text-red-600 hover:bg-red-50 px-6 py-3 rounded-xl font-semibold text-lg"
+                  >
+                    <XCircle className="w-5 h-5 mr-2" />
+                    Supprimer la réservation
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

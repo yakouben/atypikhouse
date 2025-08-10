@@ -10,7 +10,8 @@ import {
   LogOut, 
   Plus, 
   Mail,
-  MapPin as LocationIcon
+  MapPin as LocationIcon,
+  Clock
 } from 'lucide-react';
 import { useAuthContext } from './AuthProvider';
 import OwnerBookingsDashboard from './OwnerBookingsDashboard';
@@ -60,18 +61,18 @@ export default function OwnerDashboard() {
 
   useEffect(() => {
     if (userProfile?.id) {
-      loadDashboardData();
+      loadOwnerData();
+      refreshBookingData();
     }
   }, [userProfile]);
 
-  // Refresh booking data when switching to bookings tab
   useEffect(() => {
-    if (activeTab === 'bookings' && userProfile?.id) {
+    if (activeTab === 'bookings') {
       refreshBookingData();
     }
-  }, [activeTab, userProfile]);
+  }, [activeTab]);
 
-  const loadDashboardData = async () => {
+  const loadOwnerData = async () => {
     setLoading(true);
     try {
       const [propertiesData, bookingsData] = await Promise.all([
@@ -91,13 +92,16 @@ export default function OwnerDashboard() {
   // Refresh booking data
   const refreshBookingData = async () => {
     try {
-      setRefreshingBookings(true);
-      const bookingsData = await getOwnerBookings(userProfile!.id);
-      if (bookingsData.data) setBookings(bookingsData.data);
+      const response = await fetch('/api/bookings/owner');
+      if (response.ok) {
+        const result = await response.json();
+        if (result.data) {
+          setBookings(result.data);
+          console.log('Bookings refreshed:', result.data);
+        }
+      }
     } catch (error) {
       console.error('Error refreshing booking data:', error);
-    } finally {
-      setRefreshingBookings(false);
     }
   };
 
@@ -235,57 +239,54 @@ export default function OwnerDashboard() {
       <div className="p-6">
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Total Propriétés</p>
-                    <p className="text-2xl font-bold text-gray-900">{properties.length}</p>
+            {/* Enhanced Stats Cards */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-8">
+              <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">
+                <div className="flex-shrink-0 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 min-w-[160px] border border-blue-200">
+                  <div className="flex flex-col items-center text-center">
+                    <Home className="w-8 h-8 text-blue-500 mb-2" />
+                    <p className="text-xs font-medium text-blue-600 mb-1">Total Propriétés</p>
+                    <p className="text-2xl font-bold text-blue-900">{properties.length}</p>
                   </div>
-                  <Home className="w-8 h-8 text-green-600" />
                 </div>
-              </div>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Total Réservations</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {refreshingBookings ? (
-                        <span className="inline-flex items-center">
-                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-2"></div>
-                          Chargement...
-                        </span>
-                      ) : (
-                        <>
-                          {bookings.length}
-                          <span className="text-sm text-gray-500 ml-2">(Debug: {bookings.length} bookings loaded)</span>
-                        </>
-                      )}
+                
+                <div className="flex-shrink-0 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-4 min-w-[160px] border border-yellow-200">
+                  <div className="flex flex-col items-center text-center">
+                    <Calendar className="w-8 h-8 text-yellow-500 mb-2" />
+                    <p className="text-xs font-medium text-yellow-600 mb-1">Total Réservations</p>
+                    <p className="text-2xl font-bold text-yellow-900">{bookings.length}</p>
+                  </div>
+                </div>
+                
+                <div className="flex-shrink-0 bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4 min-w-[160px] border border-green-200">
+                  <div className="flex flex-col items-center text-center">
+                    <Clock className="w-8 h-8 text-green-500 mb-2" />
+                    <p className="text-xs font-medium text-green-600 mb-1">En Attente</p>
+                    <p className="text-2xl font-bold text-green-900">
+                      {bookings.filter(b => b.status === 'pending').length}
                     </p>
                   </div>
-                  <Calendar className="w-8 h-8 text-blue-600" />
                 </div>
-              </div>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">En Attente</p>
-                    <p className="text-2xl font-bold text-yellow-600">{getBookingCountByStatus('pending')}</p>
-                  </div>
-                  <Calendar className="w-8 h-8 text-yellow-600" />
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Revenus</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      €{calculateTotalRevenue().toLocaleString()}
+                
+                <div className="flex-shrink-0 bg-gradient-to-r from-[#4A7C59]/10 to-[#2C3E37]/10 rounded-xl p-4 min-w-[160px] border border-[#4A7C59]/20">
+                  <div className="flex flex-col items-center text-center">
+                    <Euro className="w-8 h-8 text-[#4A7C59] mb-2" />
+                    <p className="text-xs font-medium text-[#4A7C59] mb-1">Revenus Totaux</p>
+                    <p className="text-2xl font-bold text-[#2C3E37]">
+                      €{bookings
+                        .filter(b => b.status === 'confirmed' || b.status === 'completed')
+                        .reduce((sum, b) => sum + b.total_price, 0)
+                        .toLocaleString()}
                     </p>
                   </div>
-                  <Euro className="w-8 h-8 text-green-600" />
                 </div>
+              </div>
+              
+              {/* Scroll indicator for small screens */}
+              <div className="flex justify-center mt-2">
+                <div className="w-2 h-2 bg-gray-300 rounded-full mx-1"></div>
+                <div className="w-2 h-2 bg-gray-300 rounded-full mx-1"></div>
+                <div className="w-2 h-2 bg-gray-300 rounded-full mx-1"></div>
               </div>
             </div>
 
@@ -448,9 +449,6 @@ export default function OwnerDashboard() {
                             <button className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1">
                               <Calendar className="w-4 h-4" />
                               Réservations {getPropertyBookingCount(property.id)}
-                              <span className="text-xs text-gray-500 ml-1">
-                                (Prop: {property.id}, Bookings: {bookings.filter(b => b.property?.id === property.id || b.properties?.id === property.id).length})
-                              </span>
                             </button>
                             <button className="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
                               <Settings className="w-4 h-4" />
